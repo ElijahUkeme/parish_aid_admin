@@ -15,7 +15,7 @@ class AuthLocalSourceImpl extends AuthLocalSource {
   @override
   Future<bool> cacheAuthToken(AuthUserModel data) async {
     return await CacheManager.instance
-        .storePref(userTokenKey, json.encode(data.response!.data!.token!));
+        .storePref(userTokenKey, jsonEncode(data.response!.data!.token!));
   }
 
   @override
@@ -25,13 +25,14 @@ class AuthLocalSourceImpl extends AuthLocalSource {
 
   @override
   Future<AuthUserModel?> getAuthToken() async {
-    final authUserData =
-        await CacheManager.instance.getPref(userTokenKey) as String?;
+    final authUserData = await CacheManager.instance
+        .getPref(jsonDecode(userTokenKey)) as String?;
     if (authUserData != null && authUserData.isNotEmpty) {
       print(
           "The token returned from the local storage is ${AuthUserModel.fromJson(json.decode(authUserData))}");
       return AuthUserModel.fromJson(json.decode(authUserData));
     }
+    print("the local storage returns null");
     return null;
   }
 }

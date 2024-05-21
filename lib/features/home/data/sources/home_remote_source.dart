@@ -1,7 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:get/get.dart';
 import 'package:parish_aid_admin/api/api_client.dart';
+import 'package:parish_aid_admin/core/api/api_auth.dart';
 import 'package:parish_aid_admin/core/api/api_endpoints.dart';
 import 'package:parish_aid_admin/core/errors/exceptions.dart';
 import 'package:parish_aid_admin/core/json_checker/json_checker.dart';
@@ -15,7 +17,7 @@ import 'package:parish_aid_admin/features/home/domain/usecases/get_show.dart';
 import 'package:parish_aid_admin/features/home/domain/usecases/update_parish.dart';
 
 abstract class HomeRemoteSource {
-  Future<List<ParishModel>> getParishes();
+  Future<ParishModel> getParishes();
   Future<ParishModel> getShow(GetShowParam param);
   Future<ParishModel> updateParish(UpdateParishParams params);
   Future<ParishModel> createParish(CreateParishParams params);
@@ -30,24 +32,23 @@ class HomeRemoteSourceImpl extends HomeRemoteSource {
   HomeRemoteSourceImpl({required this.client, required this.jsonChecker});
 
   @override
-  Future<List<ParishModel>> getParishes() async {
+  Future<ParishModel> getParishes() async {
     final response = await client
         .get(Uri.parse(parishListEndPoint), headers: ApiClient.header)
         .timeout(const Duration(seconds: 20));
 
     if (await jsonChecker.isJson(response.body)) {
       final data = json.decode(response.body);
-      if (data['status' == 'OK']) {
-        //meaning a success response is return
-        final retrievedData = data;
-        final List<ParishModel> parishes = [];
-        //initialized it to an empty list first
-        //then loop through the parishes that was returned
-        //store them in the parish list that was initialized
-        for (final parish in retrievedData) {
-          parishes.add(ParishModel.fromJson(parish));
-        }
-        print("The list contains $parishes");
+      //print("The response is $data");
+      //print("The response status is ${data['status']}");
+      if (data['status'] == 'OK') {
+        final ParishModel parishes = ParishModel.fromJson(data);
+
+        // for (final parish in parishes.response!.data!) {
+        //   print(parish.parishPriestName);
+        // }
+        print("The list contains ${parishes.response!.data}");
+        print("the whole response is ${parishes.toString()}");
         return parishes;
       } else if (data['response']['code'] == unsupportedAccessErrorCode) {
         throw ServerException(data['response']['message']);
@@ -69,7 +70,9 @@ class HomeRemoteSourceImpl extends HomeRemoteSource {
 
     if (await jsonChecker.isJson(response.body)) {
       final data = json.decode(response.body);
+      print("The response is $data");
       if (data['status'] == 'OK') {
+        print("The get show response returns $data");
         return ParishModel.fromJson(data);
       } else if (data['response']['code'] == unsupportedAccessErrorCode) {
         throw ServerException(data['response']['message']);
@@ -83,9 +86,6 @@ class HomeRemoteSourceImpl extends HomeRemoteSource {
 
   @override
   Future<ParishModel> updateParish(UpdateParishParams params) async {
-    dynamic dioceseId = params.dioceseId;
-    dynamic stateId = params.stateId;
-    dynamic lgaId = params.lgaId;
     final request = http.MultipartRequest(
       'POST',
       Uri.parse('$updateParishEndPoint?parish=${params.parishId}'),
@@ -107,13 +107,13 @@ class HomeRemoteSourceImpl extends HomeRemoteSource {
       request.fields.addAll({'address': params.address!});
     }
     if (params.dioceseId != null) {
-      request.fields.addAll({'diocese_id': dioceseId});
+      request.fields.addAll({'diocese_id': params.dioceseId.toString()});
     }
     if (params.stateId != null) {
-      request.fields.addAll({'state_id': stateId});
+      request.fields.addAll({'state_id': params.stateId.toString()});
     }
     if (params.lgaId != null) {
-      request.fields.addAll({'lga_id': lgaId});
+      request.fields.addAll({'lga_id': params.lgaId.toString()});
     }
     if (params.town != null && params.town!.isNotEmpty) {
       request.fields.addAll({'town': params.town!});
@@ -145,7 +145,7 @@ class HomeRemoteSourceImpl extends HomeRemoteSource {
 
     if ((await jsonChecker.isJson(response.body))) {
       final data = json.decode(response.body);
-
+      print("The update response is $data");
       if (data['status' == 'OK']) {
         print("the returned response is ${ParishModel.fromJson(data)}");
         return ParishModel.fromJson(data);
@@ -221,10 +221,12 @@ class HomeRemoteSourceImpl extends HomeRemoteSource {
 
     final response = await http.Response.fromStream(streamedResponse);
 
+    print("The response is ${response.body}");
+
     if ((await jsonChecker.isJson(response.body))) {
       final data = json.decode(response.body);
-
-      if (data['status' == 'OK']) {
+      print("The response body is $data");
+      if (data['status'] == "OK") {
         print("the returned response is ${ParishModel.fromJson(data)}");
         return ParishModel.fromJson(data);
       } else if (data['response']['code'] == unsupportedAccessErrorCode) {
@@ -233,6 +235,7 @@ class HomeRemoteSourceImpl extends HomeRemoteSource {
         throw ServerException(serverErrorMsg);
       }
     } else {
+      print(response.body);
       throw const FormatException('Invalid response');
     }
   }

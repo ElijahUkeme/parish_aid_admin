@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:parish_aid_admin/features/auth/domain/entities/auth_user.dart';
 
 class AuthUserModel extends AuthUser {
@@ -5,13 +7,22 @@ class AuthUserModel extends AuthUser {
   final String? status;
   final ReturnResponse? response;
 
-  AuthUserModel({this.terminus, this.status, this.response});
+  const AuthUserModel({this.terminus, this.status, this.response});
 
   factory AuthUserModel.fromJson(Map<String, dynamic> json) => AuthUserModel(
       terminus: json["terminus"],
       status: json["status"],
       response: ReturnResponse.fromJson(json["response"]));
 
+  factory AuthUserModel.fromJsonObject(String source) {
+    final data = json.decode(source);
+    return AuthUserModel(
+        terminus: data["terminus"],
+        status: data["status"],
+        response: data["response" != null
+            ? ReturnResponse.fromJsonObject(data["response"])
+            : null]);
+  }
 }
 
 class ReturnResponse {
@@ -28,6 +39,14 @@ class ReturnResponse {
     this.data = data;
   }
 
+  factory ReturnResponse.fromJsonObject(String source) {
+    final data = json.decode(source);
+    return ReturnResponse(
+        code: data['code'] ?? '',
+        title: data['title'] ?? '',
+        message: data['message'] ?? '',
+        data: data['data'] != null ? Data.fromJsonObject(data['data']) : null);
+  }
   ReturnResponse.fromJson(Map<String, dynamic> json) {
     code = json["code"];
     title = json["title"];
@@ -45,6 +64,15 @@ class Data {
   Data({required token, required admin}) {
     this.token = token;
     this.admin = admin;
+  }
+
+  factory Data.fromJsonObject(String source) {
+    final data = json.decode(source);
+    return Data(
+        token: data['token'],
+        admin: data['admin'] != null
+            ? AdminResponse.fromJson(data['admin'])
+            : null);
   }
 
   Data.fromJson(Map<String, dynamic> json) {

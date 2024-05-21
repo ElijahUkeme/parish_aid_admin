@@ -12,6 +12,7 @@ import 'package:parish_aid_admin/features/auth/domain/repository/auth_repository
 import 'package:parish_aid_admin/features/auth/domain/usecase/forgot_password.dart';
 import 'package:parish_aid_admin/features/auth/domain/usecase/login_user.dart';
 import 'package:parish_aid_admin/features/auth/domain/usecase/logout_user.dart';
+import 'package:parish_aid_admin/features/auth/domain/usecase/request_otp.dart';
 import 'package:parish_aid_admin/features/auth/domain/usecase/reset_password.dart';
 import 'package:parish_aid_admin/features/auth/domain/usecase/sign_up_user.dart';
 import 'package:parish_aid_admin/features/auth/domain/usecase/verify_otp.dart';
@@ -92,7 +93,8 @@ Future<void> init() async {
       logoutUser: sl(),
       forgotPassword: sl(),
       resetPassword: sl(),
-      verifyOtp: sl()));
+      verifyOtp: sl(),
+      requestOtp: sl()));
 
   //HomeBloc Injection
   sl.registerFactory(() => HomeBloc(
@@ -140,6 +142,7 @@ Future<void> init() async {
   sl.registerLazySingleton(() => ForgotPassword(sl()));
   sl.registerLazySingleton(() => ResetPassword(sl()));
   sl.registerLazySingleton(() => VerifyOtp(sl()));
+  sl.registerLazySingleton(() => RequestOtp(sl()));
 
   //HomePage Usecases
   sl.registerLazySingleton(() => GetParishes(sl()));

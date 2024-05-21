@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart';
 import 'package:parish_aid_admin/constants/app_url_constants.dart';
@@ -16,7 +17,30 @@ class ApiClient {
     header = {
       'Content-type': 'application/json',
       'Authorization': 'Bearer $token',
+      'api-key': AppUrlConstant.API_KEY,
     };
+  }
+
+  static Future<Map<String, String>> getHeadersFromApClient(
+      {bool? jsonRequest, bool tokenized = true}) async {
+    if (jsonRequest != null && jsonRequest) {
+      return {
+        'Content-type': 'application/json',
+        HttpHeaders.authorizationHeader: 'Bearer',
+        'Accept': 'application/json'
+      };
+    } else if (!tokenized) {
+      return {
+        'Accept': 'application/json',
+        'api-key': AppUrlConstant.API_KEY,
+      };
+    }
+    final tokenizedHeader = {
+      HttpHeaders.authorizationHeader: 'Bearer',
+      'Accept': 'application/json',
+      'api-key': AppUrlConstant.API_KEY,
+    };
+    return tokenizedHeader;
   }
 
   static Future<Response> postData(String endpoint, dynamic body) async {

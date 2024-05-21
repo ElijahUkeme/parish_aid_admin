@@ -1,5 +1,3 @@
-import 'dart:html';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parish_aid_admin/core/usecase/usecase.dart';
 import 'package:parish_aid_admin/features/users/app/bloc/user_auth_event.dart';
@@ -7,6 +5,7 @@ import 'package:parish_aid_admin/features/users/app/bloc/user_auth_state.dart';
 import 'package:parish_aid_admin/features/users/domain/usecases/user_auth_forgot_password.dart';
 import 'package:parish_aid_admin/features/users/domain/usecases/user_login.dart';
 
+import '../../../auth/domain/usecase/request_otp.dart';
 import '../../domain/usecases/fetch_account.dart';
 import '../../domain/usecases/user_account_preview.dart';
 import '../../domain/usecases/user_auth_logout.dart';
@@ -31,7 +30,7 @@ class UserAuthBloc extends Bloc<UserAuthEvent, UserAuthState> {
       required this.userAuthResetPassword,
       required this.userAuthVerifyOtp})
       : super(UserAuthInitial()) {
-    on<UserAuthEvent>(event, emit) async {
+    on<UserAuthEvent>((event, emit) async {
       if (event is UserLoginEvent) {
         emit(UserLoginLoading());
 
@@ -82,6 +81,6 @@ class UserAuthBloc extends Bloc<UserAuthEvent, UserAuthState> {
         emit(result.fold((failure) => UserAuthVerifyOtpError(failure),
             (status) => UserAuthVerifyOtpLoaded(status)));
       }
-    }
+    });
   }
 }

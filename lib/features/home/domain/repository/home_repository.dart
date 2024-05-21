@@ -8,7 +8,7 @@ import 'package:parish_aid_admin/features/home/domain/usecases/get_show.dart';
 import 'package:parish_aid_admin/features/home/domain/usecases/update_parish.dart';
 
 abstract class HomeRepository {
-  Future<Either<Failure, List<ParishModel>>> getParishes();
+  Future<Either<Failure, ParishModel>> getParishes();
   Future<Either<Failure, ParishModel>> getShow(GetShowParam param);
   Future<Either<Failure, ParishModel>> updateParish(UpdateParishParams params);
   Future<Either<Failure, ParishModel>> createParish(CreateParishParams params);

@@ -16,57 +16,83 @@ class ReturnResponse {
   int? code;
   String? title;
   String? message;
-  List<Parishes>? data;
+  Parishes? data;
 
-  ReturnResponse({this.code,this.title,this.message,this.data});
+  ReturnResponse({this.code, this.title, this.message, this.data});
 
-  ReturnResponse.fromJson(Map<String,dynamic>json){
+  ReturnResponse.fromJson(Map<String, dynamic> json) {
     code = json['code'];
     title = json['title'];
     message = json['message'];
-    if(json['data'] !=null){
-      json['data'].forEach((v){
-        data!.add(Parishes.fromJson(v));
-      });
+    if (json['data'] != null) {
+      data = Parishes.fromJson(json['data']);
     }
   }
 }
 
 class Parishes {
+  List<Parish>? parish;
+
+  Parishes({this.parish});
+  Parishes.fromJson(Map<String, dynamic> json) {
+    if (json['parishes'] != null) {
+      parish =
+          (json['parishes'] as List).map((e) => Parish.fromJson(e)).toList();
+    }
+  }
+}
+
+class Parish {
   int? id;
   String? name;
   String? acronym;
+  String? email;
   String? address;
   String? phoneNo;
   String? parishPriestName;
+  String? parishId;
   Town? town;
-  State? state;
+  StateLocated? state;
   Country? country;
   Diocese? diocese;
   Attachments? attachments;
 
-  Parishes({this.id,this.name,this.acronym,this.address,this.phoneNo,this.parishPriestName,this.town,this.state,
-  this.country,this.diocese,this.attachments});
-  Parishes.fromJson(Map<String,dynamic>json){
+  Parish(
+      {this.id,
+      this.name,
+      this.acronym,
+      this.email,
+      this.address,
+      this.phoneNo,
+      this.parishPriestName,
+      this.parishId,
+      this.town,
+      this.state,
+      this.country,
+      this.diocese,
+      this.attachments});
+  Parish.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     acronym = json['acronym'];
+    email = json['email'];
     address = json['address'];
     phoneNo = json['phone_no'];
     parishPriestName = json['parish_priest_name'];
-    if(json['town'] !=null){
+    parishId = json['uuid'];
+    if (json['town'] != null) {
       town = Town.fromJson(json['town']);
     }
-    if(json['state'] !=null){
-      state = State.fromJson(json['state']);
+    if (json['state'] != null) {
+      state = StateLocated.fromJson(json['state']);
     }
-    if(json['country'] !=null){
+    if (json['country'] != null) {
       country = Country.fromJson(json['country']);
     }
-    if(json['diocese'] !=null){
+    if (json['diocese'] != null) {
       diocese = Diocese.fromJson(json['diocese']);
     }
-    if(json['attachments'] !=null){
+    if (json['attachments'] != null) {
       attachments = Attachments.fromJson(json['attachments']);
     }
   }
@@ -82,31 +108,34 @@ class Town {
     name = json['name'];
   }
 }
-class State{
+
+class StateLocated {
   int? id;
   String? name;
   int? countryId;
 
-  State({this.id,this.name,this.countryId});
+  StateLocated({this.id, this.name, this.countryId});
 
-  State.fromJson(Map<String,dynamic>json){
+  StateLocated.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     countryId = json['country_id'];
   }
 }
-class Country{
+
+class Country {
   int? id;
   String? name;
 
-  Country({this.id,this.name});
+  Country({this.id, this.name});
 
-  Country.fromJson(Map<String,dynamic>json){
+  Country.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
   }
 }
-class Diocese{
+
+class Diocese {
   int? id;
   String? name;
   String? type;
@@ -114,47 +143,56 @@ class Diocese{
   String? bishopName;
   Province? province;
 
-  Diocese({this.id,this.name,this.type,this.phoneNo,this.bishopName,this.province});
+  Diocese(
+      {this.id,
+      this.name,
+      this.type,
+      this.phoneNo,
+      this.bishopName,
+      this.province});
 
-  Diocese.fromJson(Map<String,dynamic>json){
+  Diocese.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     type = json['type'];
     phoneNo = json['phone_no'];
     bishopName = json['bishop_name'];
-    if(json['province'] !=null){
+    if (json['province'] != null) {
       province = Province.fromJson(json['province']);
     }
   }
 }
-class Province{
+
+class Province {
   int? id;
   String? name;
   String? areaCovered;
 
-  Province({this.id,this.name,this.areaCovered});
+  Province({this.id, this.name, this.areaCovered});
 
-  Province.fromJson(Map<String,dynamic>json){
+  Province.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     areaCovered = json['area_covered'];
   }
 }
-class Attachments{
+
+class Attachments {
   Logo? logo;
   CoverImage? coverImage;
 
-  Attachments({this.logo,this.coverImage});
-  Attachments.fromJson(Map<String,dynamic>json){
-    if(json['logo'] !=null){
+  Attachments({this.logo, this.coverImage});
+  Attachments.fromJson(Map<String, dynamic> json) {
+    if (json['logo'] != null) {
       logo = Logo.fromJson(json['logo']);
     }
-    if(json['cover_image'] !=null){
+    if (json['cover_image'] != null) {
       coverImage = CoverImage.fromJson(json['cover_image']);
     }
   }
 }
-class Logo{
+
+class Logo {
   int? id;
   String? name;
   String? url;
@@ -163,9 +201,16 @@ class Logo{
   String? formattedSize;
   String? createdAt;
 
-  Logo({this.id,this.name,this.url,this.mimeType,this.size,this.formattedSize,this.createdAt});
+  Logo(
+      {this.id,
+      this.name,
+      this.url,
+      this.mimeType,
+      this.size,
+      this.formattedSize,
+      this.createdAt});
 
-  Logo.fromJson(Map<String,dynamic>json){
+  Logo.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     url = json['url'];
@@ -175,7 +220,8 @@ class Logo{
     createdAt = json['created_at'];
   }
 }
-class CoverImage{
+
+class CoverImage {
   int? id;
   String? name;
   String? url;
@@ -184,9 +230,16 @@ class CoverImage{
   String? formattedSize;
   String? createdAt;
 
-  CoverImage({this.id,this.name,this.url,this.mimeType,this.size,this.formattedSize,this.createdAt});
+  CoverImage(
+      {this.id,
+      this.name,
+      this.url,
+      this.mimeType,
+      this.size,
+      this.formattedSize,
+      this.createdAt});
 
-  CoverImage.fromJson(Map<String,dynamic>json){
+  CoverImage.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     url = json['url'];

@@ -97,3 +97,15 @@ class VerifyOtpError extends AuthState {
   final Failure failure;
   VerifyOtpError(this.failure);
 }
+
+class RequestOtpLoading extends AuthState {}
+
+class RequestOtpLoaded extends AuthState {
+  final bool status;
+  RequestOtpLoaded(this.status);
+}
+
+class RequestOtpError extends AuthState {
+  final Failure failure;
+  RequestOtpError(this.failure);
+}

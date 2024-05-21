@@ -21,9 +21,9 @@ class CreateParishParams extends Equatable {
   final String? email;
   final String? phoneNo;
   final String? address;
-  final int? dioceseId;
-  final int? stateId;
-  final int? lgaId;
+  final String? dioceseId;
+  final String? stateId;
+  final String? lgaId;
   final String? town;
   final String? parishPriestName;
   final String? password;

@@ -32,9 +32,10 @@ Future<Map<String, String>> getHeaders(
 }
 
 Future<AuthUser?> getAuthUser() async {
+  print(
+      "The token from local db is ${CacheManager.instance.getPref(jsonDecode(userTokenKey))}");
   return AuthUserModel.fromJson(
-    (await CacheManager.instance.getPref(userTokenKey)) ?? '',
-  );
+      (await CacheManager.instance.getPref(userTokenKey)));
 }
 
 Future<AuthUser?> getUser() async {

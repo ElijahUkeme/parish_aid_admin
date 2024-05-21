@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:fpdart/src/either.dart';
 import 'package:parish_aid_admin/api/api_client.dart';
 import 'package:parish_aid_admin/core/failures/failure.dart';
@@ -14,6 +16,8 @@ import 'package:parish_aid_admin/features/auth/domain/usecase/reset_password.dar
 import 'package:parish_aid_admin/features/auth/domain/usecase/sign_up_user.dart';
 import 'package:parish_aid_admin/features/auth/domain/usecase/verify_otp.dart';
 import 'package:parish_aid_admin/features/auth/domain/usecase/verify_user.dart';
+
+import '../../domain/usecase/request_otp.dart';
 
 class AuthRepositoryImpl extends AuthRepository {
   final AuthRemoteSource authRemoteSource;
@@ -84,5 +88,11 @@ class AuthRepositoryImpl extends AuthRepository {
   Future<Either<Failure, bool>> verifyOtp(VerifyOtpParams params) {
     return ServiceRunner<bool>(networkInfo: networkInfo)
         .runNetworkTask(() => authRemoteSource.verifyOtp(params));
+  }
+
+  @override
+  Future<Either<Failure, bool>> requestOtp(RequestOtpParams params) {
+    return ServiceRunner<bool>(networkInfo: networkInfo)
+        .runNetworkTask(() => authRemoteSource.requestOtp(params));
   }
 }

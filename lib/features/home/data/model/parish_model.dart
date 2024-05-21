@@ -15,27 +15,21 @@ class ParishResponse {
   int? code;
   String? title;
   String? message;
-  Data? data;
+  ParishData? data;
 
-  ParishResponse(
-      {required code, required title, required message, required data}) {
-    this.code = code;
-    this.title = title;
-    this.message = message;
-    this.data = data;
-  }
+  ParishResponse(this.code, this.title, this.message, this.data);
 
   ParishResponse.fromJson(Map<String, dynamic> json) {
     code = json["code"];
     title = json["title"];
     message = json["message"];
-    if (json["data"] != null) {
-      //data = Data.fromJson(json["data"]);
+    if (json['data'] != null) {
+      data = ParishData.fromJson(json['data']);
     }
   }
 }
 
-class Data {
+class ParishData {
   int? id;
   String? name;
   String? acronym;
@@ -48,7 +42,7 @@ class Data {
   Diocese? diocese;
   Attachments? attachments;
 
-  Data(
+  ParishData(
       {this.id,
       this.name,
       this.acronym,
@@ -61,7 +55,7 @@ class Data {
       this.diocese,
       this.attachments});
 
-  Data.fromJson(Map<String, dynamic> json) {
+  ParishData.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
     acronym = json['acronym'];
@@ -166,10 +160,10 @@ class Attachments {
   Attachments.fromJson(Map<String, dynamic> json) {
     if (json['logo'] != null) {
       if (json['logo'] != null) {
-        logo = json['logo'];
+        logo = Logo.fromJson(json['logo']);
       }
       if (json['cover_image'] != null) {
-        coverImage = json['cover_image'];
+        coverImage = CoverImage.fromJson(json['cover_image']);
       }
     }
   }

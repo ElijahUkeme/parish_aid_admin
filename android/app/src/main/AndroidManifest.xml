@@ -4,7 +4,7 @@
     <application
         android:label="parish_aid_admin"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@drawable/parish_aid_solid">
         <activity
             android:name=".MainActivity"
             android:exported="true"

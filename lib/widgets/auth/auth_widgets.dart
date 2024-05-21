@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../common/colors.dart';
+import '../../core/utils/color.dart';
 
 Widget socialButton(IconData icon) {
   return Container(
@@ -120,14 +121,16 @@ Widget buildTextField(
     String hintText, String inputType, void Function(String value)? func) {
   return TextField(
     onChanged: (value) => func!(value),
-    style: const TextStyle(color: Color(0xFF4D70A6)),
+    style: TextStyle(color: Colorz.iphone12Purple.withOpacity(0.5)),
     obscureText: inputType == "password" ? true : false,
     decoration: InputDecoration(
-        focusedBorder: const UnderlineInputBorder(
-          borderSide: BorderSide(color: Color(0xFF4D70A6), width: 2),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(
+              color: Colorz.iphone12Purple.withOpacity(0.5), width: 2),
         ),
         labelText: hintText,
-        labelStyle: const TextStyle(color: Color(0xFF4D70A6), fontSize: 14)),
+        labelStyle: TextStyle(
+            color: Colorz.iphone12Purple.withOpacity(0.5), fontSize: 14)),
   );
 }
 
@@ -182,13 +185,13 @@ Route scaleIn(Widget page) {
   );
 }
 
-Widget buildLoadingIndicator() {
-  return const SizedBox(
-    height: 20,
-    width: 20,
+Widget buildLoadingIndicator({Color? color}) {
+  return SizedBox(
+    height: 25,
+    width: 25,
     child: CircularProgressIndicator(
-      valueColor: AlwaysStoppedAnimation(Colors.white),
-      backgroundColor: Colors.blue,
+      valueColor: const AlwaysStoppedAnimation(Colors.white),
+      backgroundColor: color ?? Colors.blue.shade900.withOpacity(0.5),
       strokeWidth: 3,
     ),
   );

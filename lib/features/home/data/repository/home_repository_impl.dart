@@ -23,8 +23,8 @@ class HomeRepositoryImpl extends HomeRepository {
       required this.networkInfo});
 
   @override
-  Future<Either<Failure, List<ParishModel>>> getParishes() {
-    return ServiceRunner<List<ParishModel>>(networkInfo: networkInfo)
+  Future<Either<Failure, ParishModel>> getParishes() {
+    return ServiceRunner<ParishModel>(networkInfo: networkInfo)
         .runNetworkTask(() => homeRemoteSource.getParishes());
   }
 

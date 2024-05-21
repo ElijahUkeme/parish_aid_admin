@@ -8,10 +8,12 @@ import 'package:parish_aid_admin/core/json_checker/json_checker.dart';
 import 'package:parish_aid_admin/core/utils/strings.dart';
 import 'package:parish_aid_admin/features/auth/domain/usecase/forgot_password.dart';
 import 'package:parish_aid_admin/features/auth/domain/usecase/login_user.dart';
+import 'package:parish_aid_admin/features/auth/domain/usecase/request_otp.dart';
 import 'package:parish_aid_admin/features/auth/domain/usecase/reset_password.dart';
 import 'package:parish_aid_admin/features/auth/domain/usecase/sign_up_user.dart';
 import 'package:parish_aid_admin/features/auth/domain/usecase/verify_otp.dart';
 import 'package:parish_aid_admin/features/auth/domain/usecase/verify_user.dart';
+import 'package:parish_aid_admin/widgets/auth/auth_widgets.dart';
 
 import '../models/auth_user_model.dart';
 import 'package:http/http.dart' as http;
@@ -29,6 +31,7 @@ abstract class AuthRemoteSource {
 
   Future<bool> resetPassword(ResetPasswordParams params);
   Future<bool> verifyOtp(VerifyOtpParams params);
+  Future<bool> requestOtp(RequestOtpParams params);
 }
 
 class AuthRemoteSourceImpl extends AuthRemoteSource {
@@ -137,14 +140,15 @@ class AuthRemoteSourceImpl extends AuthRemoteSource {
 
     final response = await client
         .post(Uri.parse(forgotPasswordEndPoint),
-            body: body, headers: ApiClient.header)
+            body: json.encode(body), headers: ApiClient.header)
         .timeout(const Duration(seconds: 20));
-    print("Logout response returns ${response.body}");
+    print("Forgot password response returns ${response.body}");
 
     if ((await jsonChecker.isJson(response.body))) {
       final data = json.decode(response.body);
 
       if (data['status'] == 'OK') {
+        print("Forgot password response $data");
         return true;
       } else if (data['response']['code'] == unsupportedAccessErrorCode) {
         throw ServerException(data['response']['message']);
@@ -162,21 +166,24 @@ class AuthRemoteSourceImpl extends AuthRemoteSource {
       'password': params.newPassword.trim(),
       'password_confirmation': params.newPassword.trim(),
       'email': params.email.trim(),
-      'code': params.otp
+      'code': params.otp.trim()
     };
     final response = await client
         .post(Uri.parse(passwordResetEndPoint),
-            body: body, headers: ApiClient.header)
+            body: json.encode(body), headers: ApiClient.header)
         .timeout(const Duration(seconds: 20));
 
     if ((await jsonChecker.isJson(response.body))) {
       final data = json.decode(response.body);
+      print("Reset password returns $data");
 
       if (data['status'] == 'OK') {
         return true;
       } else if (data['response']['code'] == unsupportedAccessErrorCode) {
+        print(data['response']['message']);
         throw ServerException(data['response']['message']);
       } else {
+        print(data['response']['message']);
         throw ServerException(serverErrorMsg);
       }
     } else {
@@ -198,11 +205,50 @@ class AuthRemoteSourceImpl extends AuthRemoteSource {
     }
     final response = await client
         .post(Uri.parse(otpVerifyEndPoint),
-            body: body, headers: ApiClient.header)
+            body: json.encode(body), headers: ApiClient.header)
         .timeout(const Duration(seconds: 20));
 
     if ((await jsonChecker.isJson(response.body))) {
       final data = json.decode(response.body);
+      print("Data is $data");
+      if (data['status'] == null) {
+        print(data['message']);
+        toastInfo(msg: data['message']);
+        return false;
+      }
+      if (data['status' == 'OK']) {
+        return true;
+      } else if (data['response']['code'] == unsupportedAccessErrorCode) {
+        throw ServerException(data['response']['message']);
+      } else {
+        throw ServerException(serverErrorMsg);
+      }
+    } else {
+      throw const FormatException('Invalid response');
+    }
+  }
+
+  @override
+  Future<bool> requestOtp(RequestOtpParams params) async {
+    final body = {};
+
+    if (params.email.contains("@")) {
+      body.addAll({'email': params.email.trim()});
+    }
+
+    final response = await client
+        .post(Uri.parse(otpRequestEndPoint),
+            body: json.encode(body), headers: ApiClient.header)
+        .timeout(const Duration(seconds: 20));
+
+    if ((await jsonChecker.isJson(response.body))) {
+      final data = json.decode(response.body);
+
+      if (data['status'] == null) {
+        print(data['message']);
+        toastInfo(msg: data['message']);
+        return false;
+      }
       if (data['status' == 'OK']) {
         return true;
       } else if (data['response']['code'] == unsupportedAccessErrorCode) {

@@ -9,6 +9,7 @@ import 'package:parish_aid_admin/features/auth/domain/usecase/verify_user.dart';
 
 import '../../domain/usecase/forgot_password.dart';
 import '../../domain/usecase/logout_user.dart';
+import '../../domain/usecase/request_otp.dart';
 import '../../domain/usecase/reset_password.dart';
 import '../../domain/usecase/verify_otp.dart';
 
@@ -20,6 +21,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final ForgotPassword forgotPassword;
   final ResetPassword resetPassword;
   final VerifyOtp verifyOtp;
+  final RequestOtp requestOtp;
 
   AuthBloc(
       {required this.verifyUser,
@@ -28,7 +30,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       required this.logoutUser,
       required this.forgotPassword,
       required this.resetPassword,
-      required this.verifyOtp})
+      required this.verifyOtp,
+      required this.requestOtp})
       : super(AuthInitial()) {
     on<AuthEvent>((event, emit) async {
       if (event is LoginEvent) {
@@ -70,17 +73,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
             oldPassword: event.password.toString(),
             newPassword: event.password.toString(),
             email: event.email.toString(),
-            otp: event.otp.toString()));
+            otp: event.otp));
         emit(result.fold((failure) => ResetPasswordError(failure),
             (status) => ResetPasswordLoaded(status)));
       } else if (event is VerifyOtpEvent) {
         emit(VerifyOtpLoading());
 
         final result = await verifyOtp(VerifyOtpParams(
-            email: event.email, otp: event.otp, type: event.otp));
+            email: event.email, otp: event.otp, type: event.type));
 
         emit(result.fold((failure) => VerifyOtpError(failure),
             (status) => VerifyOtpLoaded(status)));
+      } else if (event is RequestOtpEvent) {
+        emit(RequestOtpLoading());
+
+        final result = await requestOtp(RequestOtpParams(email: event.email));
+
+        emit(result.fold((failure) => RequestOtpError(failure),
+            (status) => RequestOtpLoaded(status)));
       }
     });
   }

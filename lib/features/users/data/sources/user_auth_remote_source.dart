@@ -55,6 +55,8 @@ class UserAuthRemoteSourceImpl extends UserAuthRemoteSource {
       print("Login response returns ${data.toString()}");
       if (data['status'] == 'OK') {
         //parse the json response to dart object
+        print(
+            "The returned logged in response is ${UserAuthModel.fromJson(data)}");
         return UserAuthModel.fromJson(data);
       } else if (data['response']['code'] == 461) {
         throw ServerException(data['response']['message']);
@@ -77,6 +79,9 @@ class UserAuthRemoteSourceImpl extends UserAuthRemoteSource {
     if (await jsonChecker.isJson(response.body)) {
       final data = json.decode(response.body);
       if (data['status'] == 'OK') {
+        print("First $data");
+        print(
+            "The model returns ${UserAccountFetchModel.fromJson(data).response!.message}");
         return UserAccountFetchModel.fromJson(data);
       } else if (data['response']['code'] == unsupportedAccessErrorCode) {
         throw ServerException(data['response']['message']);

@@ -13,7 +13,7 @@ class HomeInitial extends HomeState {}
 class GetParishesLoading extends HomeState {}
 
 class GetParishesLoaded extends HomeState {
-  final List<ParishModel> parishModel;
+  final ParishModel parishModel;
   GetParishesLoaded(this.parishModel);
 }
 

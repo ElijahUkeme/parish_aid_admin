@@ -53,3 +53,8 @@ class VerifyOtpEvent extends AuthEvent {
 
   VerifyOtpEvent(this.email, this.otp, this.type);
 }
+
+class RequestOtpEvent extends AuthEvent {
+  final String email;
+  RequestOtpEvent({required this.email});
+}

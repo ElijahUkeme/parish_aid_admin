@@ -2,9 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:parish_aid_admin/blocs/app/home_bloc.dart';
-import 'package:parish_aid_admin/states/app/home_state.dart';
-import 'package:parish_aid_admin/widgets/auth/auth_widgets.dart';
+import 'package:parish_aid_admin/features/home/app/bloc/home_bloc.dart';
+import 'package:parish_aid_admin/features/home/app/bloc/home_state.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
