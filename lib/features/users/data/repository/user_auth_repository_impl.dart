@@ -1,7 +1,9 @@
 import 'package:fpdart/src/either.dart';
 import 'package:parish_aid_admin/core/failures/failure.dart';
+import 'package:parish_aid_admin/features/auth/data/models/auth_user_model.dart';
 import 'package:parish_aid_admin/features/users/data/models/user_account_fetch_model.dart';
 import 'package:parish_aid_admin/features/users/data/models/user_account_preview_model.dart';
+import 'package:parish_aid_admin/features/users/data/models/user_auth_model.dart';
 import 'package:parish_aid_admin/features/users/data/models/user_auth_reset_password_model.dart';
 import 'package:parish_aid_admin/features/users/data/sources/user_auth_local_source.dart';
 import 'package:parish_aid_admin/features/users/data/sources/user_auth_remote_source.dart';
@@ -28,18 +30,15 @@ class UserAuthRepositoryImpl extends UserAuthRepository {
       required this.userAuthLocalSource});
 
   @override
-  Future<Either<Failure, bool>> signInUser(UserLoginParams params) {
-    return ServiceRunner<bool>(
+  Future<Either<Failure, AuthUserModel>> signInUser(UserLoginParams params) {
+    return ServiceRunner<AuthUserModel>(
       networkInfo: networkInfo,
     ).runNetworkTask(() async {
       //call login from authRemoteSource
-      final userToken = await userAuthRemoteSource.loginUser(params);
+      final result = await userAuthRemoteSource.loginUser(params);
+      await userAuthLocalSource.cachedUserAuth(result.response!.data!);
       //cache the new token returned from the server
-      print(
-          "this is the token from the auth repo impl ${userToken.response!.data!.token}");
-      await userAuthLocalSource.cacheAuthToken(userToken);
-      ApiClient.updateHeader(userToken.response!.data!.token!);
-      return Future.value(true);
+      return result;
     });
   }
 
@@ -63,9 +62,9 @@ class UserAuthRepositoryImpl extends UserAuthRepository {
   }
 
   @override
-  Future<Either<Failure, bool>> userAuthForgotPassword(
+  Future<Either<Failure, UserAuthResetPasswordModel>> userAuthForgotPassword(
       UserAuthForgotPasswordParams params) {
-    return ServiceRunner<bool>(networkInfo: networkInfo).runNetworkTask(
+    return ServiceRunner<UserAuthResetPasswordModel>(networkInfo: networkInfo).runNetworkTask(
         () => userAuthRemoteSource.userAuthForgotPassword(params));
   }
 

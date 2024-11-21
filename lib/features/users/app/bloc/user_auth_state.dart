@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:parish_aid_admin/features/auth/data/models/auth_user_model.dart';
 import 'package:parish_aid_admin/features/users/data/models/user_account_fetch_model.dart';
 import 'package:parish_aid_admin/features/users/data/models/user_account_preview_model.dart';
 
@@ -13,8 +14,8 @@ class UserAuthState extends Equatable {
 class UserAuthInitial extends UserAuthState {}
 
 class UserLoginLoaded extends UserAuthState {
-  final bool status;
-  UserLoginLoaded(this.status);
+  final AuthUserModel model;
+  UserLoginLoaded(this.model);
 }
 
 //loading state
@@ -65,9 +66,9 @@ class UserAuthLogoutError extends UserAuthState {
 class UserForgotPasswordLoading extends UserAuthState {}
 
 class UserForgotPasswordLoaded extends UserAuthState {
-  final bool status;
+  final UserAuthResetPasswordModel userAuthResetPasswordModel;
 
-  UserForgotPasswordLoaded(this.status);
+  UserForgotPasswordLoaded(this.userAuthResetPasswordModel);
 }
 
 class UserForgotPasswordError extends UserAuthState {

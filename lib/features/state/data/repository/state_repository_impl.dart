@@ -18,7 +18,7 @@ class StateRepositoryImpl extends StateRepository{
   StateRepositoryImpl({required this.stateRemoteSource,required this.stateLocalSource,required this.networkInfo});
 
   @override
-  Future<Either<Failure, StateModel>> getState(GetStateParams params) {
+  Future<Either<Failure, StateModel>> getState(GetStatesParams params) {
     return ServiceRunner<StateModel>(networkInfo: networkInfo)
         .runNetworkTask(() => stateRemoteSource.getState(params));
   }

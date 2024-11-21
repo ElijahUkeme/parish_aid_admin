@@ -1,3 +1,7 @@
+import 'package:parish_aid_admin/features/lga/data/models/lga_model.dart';
+
+import '../../../group/data/model/group_model.dart';
+
 class UserAccountFetchModel {
   final String? terminus;
   final String? status;
@@ -32,12 +36,20 @@ class ReturnResponse {
 
 class Parishes {
   List<Parish>? parish;
+  List<GroupData>? groups;
 
-  Parishes({this.parish});
+  Parishes({this.parish,this.groups});
   Parishes.fromJson(Map<String, dynamic> json) {
     if (json['parishes'] != null) {
       parish =
           (json['parishes'] as List).map((e) => Parish.fromJson(e)).toList();
+    }
+    if(json['parishes'] !=null){
+      groups = [];
+      json['groups'].forEach((e){
+        groups!.add(GroupData.fromJson(e));
+        print("The group length is ${groups!.length}");
+      });
     }
   }
 }
@@ -51,8 +63,10 @@ class Parish {
   String? phoneNo;
   String? parishPriestName;
   String? parishId;
+  String? type;
   Town? town;
   StateLocated? state;
+  LgaData? lgaData;
   Country? country;
   Diocese? diocese;
   Attachments? attachments;
@@ -80,11 +94,15 @@ class Parish {
     phoneNo = json['phone_no'];
     parishPriestName = json['parish_priest_name'];
     parishId = json['uuid'];
+    type = json['type'];
     if (json['town'] != null) {
       town = Town.fromJson(json['town']);
     }
     if (json['state'] != null) {
       state = StateLocated.fromJson(json['state']);
+    }
+    if(json['lga']!=null){
+      lgaData = LgaData.fromJson(json['lga']);
     }
     if (json['country'] != null) {
       country = Country.fromJson(json['country']);

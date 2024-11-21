@@ -24,6 +24,21 @@ ImageProvider getImage(String path) {
   }
 }
 
+Widget loadCircularImageWidget(String path, {BoxShape? shape, BoxFit? fit}) {
+  return Container(
+    clipBehavior: Clip.hardEdge,
+    decoration: BoxDecoration(
+      shape: shape ?? BoxShape.circle,
+    ),
+    child: path.isEmpty
+        ? Image.asset(
+      appLogoWhite,
+      color: Colors.black26,
+    )
+        : getImageWidget(path, fit: fit),
+  );
+}
+
 Widget loadImageWidget(String path, {BoxShape? shape, BoxFit? fit}) {
   return Container(
       //clipBehavior: Clip.hardEdge,

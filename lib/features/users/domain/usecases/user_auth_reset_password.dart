@@ -21,7 +21,7 @@ class UserAuthResetPassword
 class UserAuthResetPasswordParams extends Equatable {
   final String email;
   final String password;
-  final int code;
+  final String code;
   final String passwordConfirmation;
 
   const UserAuthResetPasswordParams(

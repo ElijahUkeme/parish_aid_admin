@@ -7,16 +7,16 @@ import '../../domain/usecases/get_state.dart';
 class StateBloc extends Bloc<StateEvent, StateState> {
   final GetState getState;
 
-  StateBloc({required this.getState}) : super(GetStateInitial()) {
-    on<StateEvent>(event, emit) async {
-      if (event is GetStateByStateIdEvent) {
-        emit(GetStateLoading());
+  StateBloc({required this.getState}) : super(GetStatesInitial()) {
+    on<StateEvent>((event, emit) async {
+      if (event is GetStatesByCountryIdEvent) {
+        emit(GetStatesLoading());
 
-        final result = await getState(GetStateParams(stateId: event.stateId));
+        final result = await getState(GetStatesParams(countryId: event.countryId));
 
-        emit(result.fold((failure) => GetStateError(failure),
-            (states) => GetStateLoaded(states)));
+        emit(result.fold((failure) => GetStatesError(failure),
+            (states) => GetStatesLoaded(states)));
       }
-    }
+    });
   }
 }

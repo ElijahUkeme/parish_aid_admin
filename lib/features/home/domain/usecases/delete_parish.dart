@@ -15,7 +15,7 @@ class DeleteParish extends Usecase<bool, DeleteParishParam> {
 }
 
 class DeleteParishParam extends Equatable {
-  final int parish;
+  final String parish;
   const DeleteParishParam({required this.parish});
 
   @override

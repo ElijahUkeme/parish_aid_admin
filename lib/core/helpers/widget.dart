@@ -19,13 +19,13 @@ class FadePageRoute extends PageRouteBuilder {
                 Animation<double> secondaryAnimation) {
               return widget;
             },
-            transitionDuration: Duration(milliseconds: 300),
+            transitionDuration: const Duration(milliseconds: 300),
             transitionsBuilder:
                 ((context, animation, secondaryAnimation, child) {
               return SlideTransition(
                   transformHitTests: false,
                   position:
-                      Tween<Offset>(begin: Offset(0.0, 1.0), end: Offset.zero)
+                      Tween<Offset>(begin: const Offset(0.0, 1.0), end: Offset.zero)
                           .animate(animation),
                   child: new SlideTransition(
                       position: new Tween<Offset>(
@@ -53,7 +53,7 @@ class Widgets {
       child: SizedBox(
         height: size,
         width: size,
-        child: FittedBox(
+        child: const FittedBox(
           fit: BoxFit.scaleDown,
           child: CircularProgressIndicator(
             strokeWidth: 5,
@@ -78,7 +78,7 @@ class Widgets {
   }
 
   static Color subtitleColor(BuildContext context) {
-    return Theme.of(context).textTheme.caption!.color!;
+    return Theme.of(context).textTheme.titleSmall!.color!;
   }
 
   static const Duration duration = Duration(milliseconds: 350);
@@ -148,7 +148,7 @@ class Widgets {
       "${DateTime.now().year}-${DateTime.now().month}-${DateTime.now().day}";
 
   static Widget deleted() {
-    return Center(
+    return const Center(
       child: Txt(
         fontSize: 16,
         text: "Deleted",

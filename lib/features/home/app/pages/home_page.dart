@@ -1,10 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/helpers/txt.dart';
 import '../../../../core/utils/color.dart';
 import '../../../onboarding/app/pages/navigation_drawer_page.dart';
-import '../widgets/double_card.dart';
 
 class AuthHomePage extends StatefulWidget {
   const AuthHomePage({super.key});
@@ -33,7 +31,6 @@ class _AuthHomePageState extends State<AuthHomePage> {
     return ListView.builder(
       itemCount: colors.length,
       itemBuilder: (BuildContext context, int index) {
-        final Color color = colors[index];
         return GestureDetector(
           onTap: () {
             Navigator.of(context).push(

@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:parish_aid_admin/core/api/api_endpoints.dart';
+import 'package:parish_aid_admin/core/helpers/custom_widgets.dart';
+import 'package:parish_aid_admin/features/auth/data/models/auth_user_model.dart';
 import 'package:parish_aid_admin/features/users/domain/usecases/user_account_preview.dart';
 import 'package:parish_aid_admin/features/users/domain/usecases/user_auth_forgot_password.dart';
 import 'package:parish_aid_admin/features/users/domain/usecases/user_auth_logout.dart';
@@ -8,6 +10,7 @@ import 'package:parish_aid_admin/features/users/domain/usecases/user_auth_verify
 import 'package:parish_aid_admin/features/users/domain/usecases/user_login.dart';
 
 import '../../../../api/api_client.dart';
+import '../../../../core/api/api_auth.dart';
 import '../../../../core/errors/exceptions.dart';
 import '../../../../core/json_checker/json_checker.dart';
 import '../../../../core/utils/strings.dart';
@@ -20,7 +23,7 @@ import 'package:http/http.dart' as http;
 import '../models/user_auth_reset_password_model.dart';
 
 abstract class UserAuthRemoteSource {
-  Future<UserAuthModel> loginUser(UserLoginParams params);
+  Future<AuthUserModel> loginUser(UserLoginParams params);
 
   Future<UserAccountFetchModel> fetchAccount();
 
@@ -28,7 +31,7 @@ abstract class UserAuthRemoteSource {
 
   Future<bool> logoutAuthUser(UserAuthLogoutParams params);
 
-  Future<bool> userAuthForgotPassword(UserAuthForgotPasswordParams params);
+  Future<UserAuthResetPasswordModel> userAuthForgotPassword(UserAuthForgotPasswordParams params);
 
   Future<UserAuthResetPasswordModel> userResetPassword(
       UserAuthResetPasswordParams params);
@@ -43,21 +46,24 @@ class UserAuthRemoteSourceImpl extends UserAuthRemoteSource {
   UserAuthRemoteSourceImpl({required this.client, required this.jsonChecker});
 
   @override
-  Future<UserAuthModel> loginUser(UserLoginParams params) async {
+  Future<AuthUserModel> loginUser(UserLoginParams params) async {
     final body = {"email": params.email, "password": params.password};
     final response = await client
         .post(Uri.parse(userLoginEndPoint),
-            body: json.encode(body), headers: ApiClient.header)
+            body: body, headers: await getHeaders(tokenized: false))
         .timeout(const Duration(seconds: 20));
+
+    pp(response.body);
 
     if (await jsonChecker.isJson(response.body)) {
       final data = json.decode(response.body);
-      print("Login response returns ${data.toString()}");
       if (data['status'] == 'OK') {
+
+        pp(data);
+
         //parse the json response to dart object
-        print(
-            "The returned logged in response is ${UserAuthModel.fromJson(data)}");
-        return UserAuthModel.fromJson(data);
+        AuthUserModel model = AuthUserModel.fromJson(data);
+        return model;
       } else if (data['response']['code'] == 461) {
         throw ServerException(data['response']['message']);
       } else if (data['response']['code'] == 422) {
@@ -72,16 +78,17 @@ class UserAuthRemoteSourceImpl extends UserAuthRemoteSource {
 
   @override
   Future<UserAccountFetchModel> fetchAccount() async {
+    pp('Fetch account called');
     final response = await client
-        .get(Uri.parse(userAccountFetchEndPoint), headers: ApiClient.header)
+        .get(Uri.parse(userAccountFetchEndPoint),
+        headers: await getHeaders())
         .timeout(const Duration(seconds: 20));
+    pp(response.body);
 
     if (await jsonChecker.isJson(response.body)) {
       final data = json.decode(response.body);
       if (data['status'] == 'OK') {
-        print("First $data");
-        print(
-            "The model returns ${UserAccountFetchModel.fromJson(data).response!.message}");
+        pp(data);
         return UserAccountFetchModel.fromJson(data);
       } else if (data['response']['code'] == unsupportedAccessErrorCode) {
         throw ServerException(data['response']['message']);
@@ -98,14 +105,20 @@ class UserAuthRemoteSourceImpl extends UserAuthRemoteSource {
       UserAccountPreviewParams params) async {
     final body = {'email': params.email};
     final response = await client.post(Uri.parse(userPreviewEndPoint),
-        body: json.encode(body), headers: ApiClient.header);
+        body: body, headers: await getHeaders(tokenized: false));
+
+
+    pp(response.body);
+
     if (await jsonChecker.isJson(response.body)) {
       final data = json.decode(response.body);
       if (data['status'] == 'OK') {
-        print("From the auth remote is $data");
+
+        pp(data);
+
         return UserAccountPreviewModel.fromJson(data);
       } else {
-        print("From the auth remote is ${json.decode(response.body)}");
+
         return UserAccountPreviewModel.fromJson(data);
       }
     } else {
@@ -116,8 +129,11 @@ class UserAuthRemoteSourceImpl extends UserAuthRemoteSource {
   @override
   Future<bool> logoutAuthUser(UserAuthLogoutParams params) async {
     final response = await client
-        .post(Uri.parse(userAuthLogoutEndPoint), headers: ApiClient.header)
+        .post(Uri.parse(userAuthLogoutEndPoint), headers: await getHeaders())
         .timeout(const Duration(seconds: 20));
+
+    pp(response.body);
+
     if (await jsonChecker.isJson(response.body)) {
       final data = json.decode(response.body);
       if (data['status' == 'OK']) {
@@ -131,7 +147,7 @@ class UserAuthRemoteSourceImpl extends UserAuthRemoteSource {
   }
 
   @override
-  Future<bool> userAuthForgotPassword(
+  Future<UserAuthResetPasswordModel> userAuthForgotPassword(
       UserAuthForgotPasswordParams params) async {
     final body = {};
 
@@ -141,21 +157,28 @@ class UserAuthRemoteSourceImpl extends UserAuthRemoteSource {
 
     final response = await client
         .post(Uri.parse(userAuthForgotPasswordEndPoint),
-            body: body, headers: ApiClient.header)
+            body: json.encode(body), headers: await getHeaders())
         .timeout(const Duration(seconds: 20));
-    print("Logout response returns ${response.body}");
+
+    pp(response.body);
 
     if ((await jsonChecker.isJson(response.body))) {
       final data = json.decode(response.body);
 
       if (data['status'] == 'OK') {
-        return true;
+
+        pp(data);
+
+        return UserAuthResetPasswordModel.fromJson(data);
       } else if (data['response']['code'] == unsupportedAccessErrorCode) {
+
         throw ServerException(data['response']['message']);
       } else {
+
         throw ServerException(serverErrorMsg);
       }
     } else {
+
       throw const FormatException('Invalid response');
     }
   }
@@ -171,13 +194,18 @@ class UserAuthRemoteSourceImpl extends UserAuthRemoteSource {
     };
     final response = await client
         .post(Uri.parse(userAuthResetPasswordEndPoint),
-            body: body, headers: ApiClient.header)
+            body: json.encode(body), headers: await getHeaders())
         .timeout(const Duration(seconds: 20));
+
+    pp(response.body);
 
     if ((await jsonChecker.isJson(response.body))) {
       final data = json.decode(response.body);
 
       if (data['status'] == 'OK') {
+
+        pp(data);
+
         return UserAuthResetPasswordModel.fromJson(data);
       } else if (data['response']['code'] == unsupportedAccessErrorCode) {
         throw ServerException(data['response']['message']);
@@ -203,8 +231,10 @@ class UserAuthRemoteSourceImpl extends UserAuthRemoteSource {
     }
     final response = await client
         .post(Uri.parse(userAuthOtpVerifyEndPoint),
-            body: body, headers: ApiClient.header)
+            body: json.encode(body), headers: await getHeaders())
         .timeout(const Duration(seconds: 20));
+
+    pp(response.body);
 
     if ((await jsonChecker.isJson(response.body))) {
       final data = json.decode(response.body);

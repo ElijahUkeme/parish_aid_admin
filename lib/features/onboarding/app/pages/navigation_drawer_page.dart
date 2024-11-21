@@ -1,12 +1,13 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:parish_aid_admin/features/onboarding/app/pages/create_parish_page.dart';
+import 'package:parish_aid_admin/core/helpers/custom_widgets.dart';
+import 'package:parish_aid_admin/features/onboarding/app/pages/navigation_route_page.dart';
 
 import '../../../../core/helpers/txt.dart';
-import '../../../../core/utils/color.dart';
 import '../../../home/app/widgets/drawer_menu.dart';
+import '../../../users/data/models/user_account_fetch_model.dart';
 
 class NavigationDrawerPage extends StatefulWidget {
+
   const NavigationDrawerPage({Key? key}) : super(key: key);
 
   @override
@@ -19,7 +20,7 @@ class _NavigationDrawerPage extends State<NavigationDrawerPage> {
     return Scaffold(
       appBar: appBar(),
       //body: body(),
-      drawer: const ComplexDrawer(),
+      //drawer: const ComplexDrawer(),
       drawerScrimColor: Colors.transparent,
       //backgroundColor: Colorz.compexDrawerCanvasColor,
     );
@@ -28,18 +29,18 @@ class _NavigationDrawerPage extends State<NavigationDrawerPage> {
   AppBar appBar() {
     return AppBar(
       iconTheme: IconTheme.of(context).copyWith(
-        color: Colors.white.withOpacity(0.8),
+        //color: Colors.white.withOpacity(0.8),
       ),
       title: Txt(
         text: "",
         color: Colors.white.withOpacity(0.5),
       ),
-      backgroundColor: Colors.blue.shade900.withOpacity(0.8),
+      //backgroundColor: Colors.blue.shade900.withOpacity(0.8),
     );
   }
 
   Widget body() {
-    return Container(
+    return SizedBox(
         width: MediaQuery.of(context).size.width,
         height: MediaQuery.of(context).size.height,
         child: Image.asset(
@@ -50,7 +51,8 @@ class _NavigationDrawerPage extends State<NavigationDrawerPage> {
 }
 
 class ComplexDrawer extends StatefulWidget {
-  const ComplexDrawer({Key? key}) : super(key: key);
+  final Parish parish;
+  const ComplexDrawer({Key? key,required this.parish}) : super(key: key);
 
   @override
   _ComplexDrawerState createState() => _ComplexDrawerState();
@@ -63,28 +65,30 @@ class _ComplexDrawerState extends State<ComplexDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
+    double width = 270;
     return Container(
       width: width,
+      color: Colors.blue.shade900.withOpacity(0.8),
       child: row(),
-      //color: Colors.white,
     );
   }
 
   Widget row() {
     return Row(children: [
-      isExpanded ? blackIconTiles() : blackIconMenu(),
-      invisibleSubMenus(),
+       blackIconTiles()
+          //: blackIconMenu(),
+      //invisibleSubMenus(),
     ]);
   }
 
   Widget blackIconTiles() {
     return Container(
-      width: 200,
-      color: Colors.blue.shade900.withOpacity(0.8),
+      width: 270,
+      margin: const EdgeInsets.only(top: 10,bottom: 20),
+      color: Colors.blue.shade900.withOpacity(0.10),
       child: Column(
         children: [
-          controlTile(),
+          //controlTile(),
           Expanded(
             child: ListView.builder(
               itemCount: cdms.length,
@@ -107,11 +111,11 @@ class _ComplexDrawerState extends State<ComplexDrawer> {
                     trailing: cdm.submenus.isEmpty
                         ? null
                         : Icon(
-                            selected
-                                ? Icons.keyboard_arrow_up
-                                : Icons.keyboard_arrow_down,
-                            color: Colors.white,
-                          ),
+                      selected
+                          ? Icons.keyboard_arrow_up
+                          : Icons.keyboard_arrow_down,
+                      color: Colors.white,
+                    ),
                     children: cdm.submenus.map((subMenu) {
                       return sMenuButton(subMenu, false);
                     }).toList());
@@ -126,7 +130,7 @@ class _ComplexDrawerState extends State<ComplexDrawer> {
 
   Widget controlTile() {
     return Padding(
-      padding: EdgeInsets.only(top: 20, bottom: 30),
+      padding: const EdgeInsets.only(top: 20, bottom: 30),
       child: ListTile(
         leading: Image.asset("assets/images/parish_aid_spot.png"),
         title: const Txt(
@@ -142,7 +146,7 @@ class _ComplexDrawerState extends State<ComplexDrawer> {
 
   Widget blackIconMenu() {
     return AnimatedContainer(
-      duration: Duration(seconds: 1),
+      duration: const Duration(seconds: 1),
       width: 100,
       color: Colors.blue.shade900.withOpacity(0.8),
       child: Column(
@@ -176,7 +180,7 @@ class _ComplexDrawerState extends State<ComplexDrawer> {
   Widget invisibleSubMenus() {
     // List<CDM> _cmds = cdms..removeAt(0);
     return AnimatedContainer(
-      duration: Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 500),
       width: isExpanded ? 0 : 125,
       child: Column(
         children: [
@@ -202,7 +206,7 @@ class _ComplexDrawerState extends State<ComplexDrawer> {
 
   Widget controlButton() {
     return Padding(
-      padding: EdgeInsets.only(top: 20, bottom: 30),
+      padding: const EdgeInsets.only(top: 20, bottom: 30),
       child: InkWell(
         onTap: expandOrShrinkDrawer,
         child: Container(
@@ -215,19 +219,19 @@ class _ComplexDrawerState extends State<ComplexDrawer> {
 
   Widget subMenuWidget(List<String> submenus, bool isValidSubMenu) {
     return AnimatedContainer(
-      duration: Duration(milliseconds: 500),
+      duration: const Duration(milliseconds: 500),
       height: isValidSubMenu ? submenus.length.toDouble() * 57.5 : 45,
       alignment: Alignment.center,
       decoration: BoxDecoration(
           color: isValidSubMenu
               ? Colors.blue.shade900.withOpacity(0.8)
               : Colors.transparent,
-          borderRadius: BorderRadius.only(
+          borderRadius: const BorderRadius.only(
             topRight: Radius.circular(8),
             bottomRight: Radius.circular(8),
           )),
       child: ListView.builder(
-          padding: EdgeInsets.all(6),
+          padding: const EdgeInsets.all(6),
           itemCount: isValidSubMenu ? submenus.length : 0,
           itemBuilder: (context, index) {
             String subMenu = submenus[index];
@@ -241,22 +245,20 @@ class _ComplexDrawerState extends State<ComplexDrawer> {
       onTap: () {
         //handle the function
         //if index==0? donothing: doyourlogic here
-        print("The tapped sub menu is ${subMenu.toString()}");
-        if (subMenu.toString() == "Create a Parish") {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (context) => const CreateParishPage(),
-            ),
-          );
-        }
+        pp("The tapped sub menu is ${subMenu.toString()}");
+        navigate(context, subMenu,widget.parish);
       },
       child: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Txt(
-          text: subMenu,
-          fontSize: isTitle ? 17 : 14,
-          color: isTitle ? Colors.white : Colors.grey,
-          fontWeight: FontWeight.bold,
+        child: Container(
+          margin: const EdgeInsets.only(left: 15),
+          alignment: Alignment.centerLeft,
+          child: Txt(
+            text: subMenu,
+            fontSize: isTitle ? 17 : 14,
+            color: isTitle ? Colors.white : Colors.grey,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
@@ -303,52 +305,45 @@ class _ComplexDrawerState extends State<ComplexDrawer> {
 
     CDM(Icons.church, "Parish", [
       "Create a Parish",
-      "Show All",
-      "Show One",
+      //"Show All Parish",
+      "Show a Parish",
       "Update a Parish",
-      "Approve a Parish",
+      //"Approve a Parish",
       "Delete a Parish"
     ]),
     CDM(Icons.subscriptions, "Billing", [
-      "Show All",
-      "Show One",
-      "Create a Billing",
-      "Update a Billing",
-      "Delete a Billing"
+      "Show All Billings",
+      "Show a Billing",
+      //"Create a Billing",
+      //"Update a Billing",
+      //"Delete a Billing"
     ]),
-    CDM(Icons.subscriptions, "Plan Benefit", ["All Plans", "Save a Plan"]),
+    //CDM(Icons.subscriptions, "Plan Benefit", ["All Plans", "Save a Plan"]),
     CDM(
       Icons.person,
       "Parishioner",
       [
-        "Register a Parishioner",
-        "Preview a Parishioner",
-        "Update a Parishioner",
+        "Create a Parishioner",
         "Get all Parishioners",
         "Show a Parishioner",
         "Delete a Parishioner"
       ],
     ),
-    CDM(Icons.church, "Parish Registration", [
-      "Register a Parish",
-      "Get a Parish",
-      "Get Parish Details",
-      "Get Parish by Uid"
-    ]),
+    // CDM(Icons.church, "Parish Registration", [
+    //   "Register a Parish",
+    //   "Get a Parish",
+    //   "Get Parish Details",
+    //   "Get Parish by Uid"
+    // ]),
 
     CDM(Icons.group, "Group Admin", [
-      "Update Group Admin",
       "Get all Group Admin",
-      "Show a Group Admin",
-      "Delete a Group Admin",
       "Create a Group Admin",
     ]),
     CDM(Icons.group, "Group", [
-      "Update a Group",
+      "Create a Group",
       "Get all Groups",
       "Show a Group",
-      "Delete a Group",
-      "Create a Group"
     ]),
     CDM(Icons.settings, "Verification Code", [
       "Create a Verification Code",
@@ -357,16 +352,16 @@ class _ComplexDrawerState extends State<ComplexDrawer> {
       "Show Verification Code",
       "Delete a Verification Code"
     ]),
-    CDM(Icons.money, "Transactions",
-        ["Get all Transactions", "Show a Transaction"]),
-    CDM(Icons.grid_view, "Billing Plans", ["Get all Plans", "Show a Plan"]),
+    // CDM(Icons.money, "Transactions",
+    //     ["Get all Transactions", "Show a Transaction"]),
+    // CDM(Icons.grid_view, "Billing Plans", ["Get all Plans", "Show a Plan"]),
     CDM(Icons.grid_view, "Subscriptions",
         ["Get Subscription List", "Show a Subscription"]),
-    CDM(Icons.church, "Diocese", [
-      "Get all Diocese",
-      "Show a Diocese",
-    ]),
-    CDM(Icons.location_on, "Location", ["Get States", "Get LGAs", "Get Towns"]),
+    // CDM(Icons.church, "Diocese", [
+    //   "Get all Diocese",
+    //   "Show a Diocese",
+    // ]),
+    // CDM(Icons.location_on, "Location", ["Get States", "Get LGAs", "Get Towns"]),
   ];
 
   void expandOrShrinkDrawer() {

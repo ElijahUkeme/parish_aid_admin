@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:parish_aid_admin/core/failures/failure.dart';
-import 'package:parish_aid_admin/features/auth/domain/entities/auth_user.dart';
+import 'package:parish_aid_admin/features/auth/data/models/auth_user_model.dart';
+
+import '../../domain/entities/auth_user.dart';
 
 abstract class AuthState extends Equatable {
   @override
@@ -12,8 +14,8 @@ class AuthInitial extends AuthState {}
 
 //login state
 class LoginLoaded extends AuthState {
-  final bool status;
-  LoginLoaded(this.status);
+  final AuthUserModel model;
+  LoginLoaded(this.model);
 }
 
 //loading state
@@ -27,8 +29,8 @@ class LoginError extends AuthState {
 
 //register states
 class RegisterLoaded extends AuthState {
-  final bool status;
-  RegisterLoaded(this.status);
+  final AuthUserModel model;
+  RegisterLoaded(this.model);
 }
 
 class RegisterLoading extends AuthState {}

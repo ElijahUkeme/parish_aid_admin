@@ -152,9 +152,8 @@ class _ButtonState extends State<Button> {
       TextButton.styleFrom(backgroundColor: _buttonColor, shape: shape);
 
   ButtonStyle get outlinedButtonStyle => OutlinedButton.styleFrom(
-      shadowColor: _buttonColor,
-      onSurface: _buttonColor,
-      primary: _buttonColor,
+      foregroundColor: _buttonColor, shadowColor: _buttonColor,
+      disabledForegroundColor: _buttonColor.withOpacity(0.38),
       shape: shape);
 
   RoundedRectangleBorder get shape => RoundedRectangleBorder(

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:parish_aid_admin/core/api/api_endpoints.dart';
+import 'package:parish_aid_admin/core/helpers/custom_widgets.dart';
 import 'package:parish_aid_admin/features/town/domain/usecases/get_town.dart';
 
 import '../../../../api/api_client.dart';
@@ -29,9 +30,14 @@ class TownRemoteSourceImpl extends TownRemoteSource {
         .get(Uri.parse(townGet), headers: ApiClient.header)
         .timeout(const Duration(seconds: 20));
 
+    pp(response.body);
+
     if (await jsonChecker.isJson(response.body)) {
       final data = json.decode(response.body);
       if (data['status'] == 'OK') {
+
+        pp(data);
+
         return TownModel.fromJson(data);
       } else if (data['response']['code'] == unsupportedAccessErrorCode) {
         throw ServerException(data['response']['message']);

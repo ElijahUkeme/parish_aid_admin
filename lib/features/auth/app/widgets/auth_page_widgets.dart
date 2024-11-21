@@ -282,54 +282,65 @@ Widget signInButton(Size size) {
   );
 }
 
-Widget buildRememberForgetSection() {
+Widget buildRememberForgetSection(Function() func) {
   return Padding(
     padding: const EdgeInsets.symmetric(horizontal: 20.0),
     child: Row(
       children: [
-        Container(
-          alignment: Alignment.center,
-          width: 20.0,
-          height: 20.0,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(5.0),
-            color: Colors.blue.shade900,
-          ),
-          child: const Icon(
-            Icons.check_box,
-            size: 13,
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(
-          width: 8,
-        ),
-        Text(
-          'Remember me',
-          style: GoogleFonts.inter(
-            fontSize: 15.0,
-            color: Colors.blue.shade900,
-          ),
-        ),
+
         const Spacer(),
-        Text(
-          'Forgot password',
-          style: GoogleFonts.inter(
-            fontSize: 13.0,
-            color: Colors.blue.shade900,
-            fontWeight: FontWeight.w500,
+        GestureDetector(
+          onTap: func,
+          child: Text(
+            'Forgot password',
+            style: GoogleFonts.inter(
+              fontSize: 13.0,
+              color: Colors.blue.shade900,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.right,
           ),
-          textAlign: TextAlign.right,
         ),
       ],
     ),
   );
 }
 
-Widget buildInputFields(Size size, String input, String textHint,
+
+Widget buildInputFields(Size size,bool isParish, String input, String textHint,
     bool isObscured, void Function(String value)? func) {
   return Container(
-    margin: EdgeInsets.only(left: 15, right: 15),
+    alignment: Alignment.center,
+    margin: isParish?EdgeInsets.zero:const EdgeInsets.only(left: 15,right: 15),
+
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(
+          input,
+          style: GoogleFonts.inter(
+            fontSize: 12.0,
+            color: Colors.black87,
+            height: 1.0,
+          ),
+        ),
+        const SizedBox(
+          height: 8,
+        ),
+        inputFieldBody(size, textHint, isObscured, func)
+      ],
+    ),
+  );
+}
+
+Widget buildUpdateInputFields({required Size size, required bool isParish, required String input, required String textHint,
+  required bool isObscured,required String initialText, void Function(String value)? func}) {
+  return Container(
+    color: Colors.white,
+    margin: isParish ? EdgeInsets.zero : const EdgeInsets.only(
+        left: 15, right: 15),
+
     child: Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -345,7 +356,7 @@ Widget buildInputFields(Size size, String input, String textHint,
         const SizedBox(
           height: 8,
         ),
-        inputFieldBody(size, textHint, isObscured, func)
+        updateInputFieldBody(size, textHint, isObscured, initialText,func)
       ],
     ),
   );
@@ -353,10 +364,112 @@ Widget buildInputFields(Size size, String input, String textHint,
 
 Widget inputFieldBody(Size size, String textHint, bool isObscured,
     void Function(String value)? func) {
-  return SizedBox(
+  return Container(
+    alignment: Alignment.center,
     height: size.height / 17,
+    decoration: BoxDecoration(
+      color: Colors.white, // Background color for the input field
+      //borderRadius: BorderRadius.circular(30), // Rounded corners
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.2), // Shadow color
+          spreadRadius: 0,
+          blurRadius: 2,
+          //offset: const Offset(1, 1), // Changes the position of the shadow
+        ),
+      ],
+    ),
     child: TextField(
-      //controller: emailController,
+      style: GoogleFonts.inter(
+        fontSize: 18.0,
+        color: const Color(0xFF151624),
+      ),
+      maxLines: 1,
+      obscureText: isObscured,
+      cursorColor: const Color(0xFF151624),
+      onChanged: (value) => func!(value),
+      decoration: InputDecoration(
+        hintText: textHint,
+        hintStyle: GoogleFonts.inter(
+          fontSize: 14.0,
+          color: const Color(0xFFABB3BB),
+          height: 1.0,
+        ),
+        contentPadding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 12.0), // Adjust as needed
+        border: InputBorder.none, // Remove the border
+        filled: true, // Fill the background color
+        fillColor: Colors.white, // Match the background color
+      ),
+    ),
+  );
+}
+// Widget inputFieldBody(Size size, String textHint, bool isObscured,
+//     void Function(String value)? func) {
+//   return Container(
+//     alignment: Alignment.center,
+//     height: size.height / 17,
+//     decoration: BoxDecoration(
+//       color: Colors.white,
+//       borderRadius: BorderRadius.circular(30),
+//           boxShadow: [
+//             BoxShadow(
+//               spreadRadius: 1,
+//               blurRadius: 5,
+//               offset: Offset(0, 2)
+//     )
+//         ]
+//     ),
+//     child: TextField(
+//       style: GoogleFonts.inter(
+//         fontSize: 18.0,
+//         color: const Color(0xFF151624),
+//       ),
+//       maxLines: 1,
+//       obscureText: isObscured,
+//       cursorColor: const Color(0xFF151624),
+//       onChanged: (value) => func!(value),
+//       decoration: InputDecoration(
+//         hintText: textHint,
+//         hintStyle: GoogleFonts.inter(
+//           fontSize: 14.0,
+//           color: const Color(0xFFABB3BB),
+//           height: 1.0,
+//         ),
+//         contentPadding: const EdgeInsets.symmetric(vertical: 7.0, horizontal: 12.0), // Adjust as needed
+//         border: OutlineInputBorder(
+//           borderRadius: BorderRadius.circular(8),
+//         ),
+//         focusedBorder: OutlineInputBorder(
+//           borderSide: BorderSide(
+//             color: Colors.blue.shade900.withOpacity(0.8),
+//             width: 0.5,
+//           ),
+//           borderRadius: BorderRadius.circular(8),
+//         ),
+//       ),
+//     ),
+//   );
+// }
+
+Widget updateInputFieldBody(Size size, String textHint, bool isObscured,String initialText,
+    void Function(String value)? func) {
+  return Container(
+    decoration: const BoxDecoration(
+      boxShadow: [
+        BoxShadow(
+          color: Colors.white,
+          blurRadius: 10.0, // soften the shadow
+          spreadRadius: 1.0, //extend the shadow
+          offset: Offset(
+            1.0, // Move to right 5  horizontally
+            1.0, // Move to bottom 5 Vertically
+          ),
+        )
+      ],
+    ),
+    height: size.height / 17,
+    child: TextFormField(
+      initialValue: initialText,
       style: GoogleFonts.inter(
         fontSize: 18.0,
         color: const Color(0xFF151624),
@@ -373,16 +486,26 @@ Widget inputFieldBody(Size size, String textHint, bool isObscured,
           height: 1.0,
         ),
         border: OutlineInputBorder(
+          //borderSide: BorderSide.none,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide:  BorderSide(
+            color: Colors.blue.shade900.withOpacity(0.8),
+            width: 2.0,
+          ),
           borderRadius: BorderRadius.circular(8),
         ),
       ),
+
     ),
   );
 }
 
+
 Widget triggerActionButtonWhite(Size size, String text, {Color? color}) {
   return Container(
-    margin: EdgeInsets.only(left: 15, right: 15),
+    margin: const EdgeInsets.only(left: 15, right: 15),
     alignment: Alignment.center,
     height: size.height / 13,
     decoration: BoxDecoration(

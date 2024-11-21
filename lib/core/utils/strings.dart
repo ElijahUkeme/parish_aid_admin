@@ -8,7 +8,7 @@ const String ANDROID_KEY = "";
 const String networkFailure = "Network Failure";
 const String cacheFailure = 'Cache Failure';
 const String serverFailure = 'Server Failure';
-const String networkError = 'Internet Connection';
+const String networkError = 'Poor Internet Connection';
 const String timeoutError = 'Request Timeout';
 const String noInternetError = 'No Internet Connection';
 const String processFailure = 'Process Failure';
@@ -27,3 +27,5 @@ const String userKey = 'user_key';
 const String endUserTokenKey = 'end-user-token-key';
 const String endUserProfileKey = 'end-user-profile';
 const String endUserKey = 'end-user-key';
+
+

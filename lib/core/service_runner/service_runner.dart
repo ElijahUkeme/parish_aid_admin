@@ -43,7 +43,7 @@ class ServiceRunner<Type> {
         return const Left(UnknownFailure(unknownError));
       }
     } else {
-      Fluttertoast.showToast(msg: "No Internet");
+      //Fluttertoast.showToast(msg: "No Internet");
       return const Left(InternetFailure(networkFailure, noInternetError));
     }
   }

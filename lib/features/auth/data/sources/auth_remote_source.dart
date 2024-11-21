@@ -4,6 +4,7 @@ import 'package:parish_aid_admin/api/api_client.dart';
 import 'package:parish_aid_admin/core/api/api_auth.dart';
 import 'package:parish_aid_admin/core/api/api_endpoints.dart';
 import 'package:parish_aid_admin/core/errors/exceptions.dart';
+import 'package:parish_aid_admin/core/helpers/custom_widgets.dart';
 import 'package:parish_aid_admin/core/json_checker/json_checker.dart';
 import 'package:parish_aid_admin/core/utils/strings.dart';
 import 'package:parish_aid_admin/features/auth/domain/usecase/forgot_password.dart';
@@ -13,6 +14,7 @@ import 'package:parish_aid_admin/features/auth/domain/usecase/reset_password.dar
 import 'package:parish_aid_admin/features/auth/domain/usecase/sign_up_user.dart';
 import 'package:parish_aid_admin/features/auth/domain/usecase/verify_otp.dart';
 import 'package:parish_aid_admin/features/auth/domain/usecase/verify_user.dart';
+import 'package:parish_aid_admin/features/users/data/models/user_auth_model.dart';
 import 'package:parish_aid_admin/widgets/auth/auth_widgets.dart';
 
 import '../models/auth_user_model.dart';
@@ -45,7 +47,7 @@ class AuthRemoteSourceImpl extends AuthRemoteSource {
     final body = {"email": params.email, "password": params.password};
     final response = await client
         .post(Uri.parse(userLogin),
-            body: json.encode(body), headers: ApiClient.header)
+            body: json.encode(body), headers: await getHeaders(tokenized: false))
         .timeout(const Duration(seconds: 20));
 
     if (await jsonChecker.isJson(response.body)) {
@@ -78,13 +80,18 @@ class AuthRemoteSourceImpl extends AuthRemoteSource {
         .post(
           Uri.parse(userSignUp),
           body: json.encode(body),
-          headers: await getHeaders(),
+          headers: await getHeaders(tokenized: false),
         )
         .timeout(const Duration(seconds: 20));
+
+    pp(response.body);
 
     if (await jsonChecker.isJson(response.body)) {
       final data = json.decode(response.body);
       if (data['status'] == 'OK') {
+
+        pp(data);
+
         return AuthUserModel.fromJson(data);
       } else {
         throw ServerException(data['response']['message']);
@@ -96,16 +103,22 @@ class AuthRemoteSourceImpl extends AuthRemoteSource {
 
   @override
   Future<AuthUserModel> verifyUser(VerifyUserParams params) async {
+
+
     final body = {'email': params.email};
     final response = await client.post(Uri.parse(userPreview),
-        body: json.encode(body), headers: ApiClient.header);
+        body: json.encode(body), headers: await getHeaders());
+
+    pp(response.body);
+
     if (await jsonChecker.isJson(response.body)) {
       final data = json.decode(response.body);
       if (data['status'] == 'OK') {
-        print("From the auth remote is $data");
+
+        pp(data);
+
         return AuthUserModel.fromJson(data);
       } else {
-        print("From the auth remote is ${json.decode(response.body)}");
         return AuthUserModel.fromJson(data);
       }
     } else {
@@ -118,6 +131,9 @@ class AuthRemoteSourceImpl extends AuthRemoteSource {
     final response = await client
         .post(Uri.parse(signOut), headers: ApiClient.header)
         .timeout(const Duration(seconds: 20));
+
+    pp(response.body);
+
     if (await jsonChecker.isJson(response.body)) {
       final data = json.decode(response.body);
       if (data['status' == 'OK']) {
@@ -140,15 +156,16 @@ class AuthRemoteSourceImpl extends AuthRemoteSource {
 
     final response = await client
         .post(Uri.parse(forgotPasswordEndPoint),
-            body: json.encode(body), headers: ApiClient.header)
+            body: json.encode(body), headers: await getHeaders())
         .timeout(const Duration(seconds: 20));
-    print("Forgot password response returns ${response.body}");
+
+    pp(response.body);
 
     if ((await jsonChecker.isJson(response.body))) {
       final data = json.decode(response.body);
 
       if (data['status'] == 'OK') {
-        print("Forgot password response $data");
+
         return true;
       } else if (data['response']['code'] == unsupportedAccessErrorCode) {
         throw ServerException(data['response']['message']);
@@ -170,20 +187,21 @@ class AuthRemoteSourceImpl extends AuthRemoteSource {
     };
     final response = await client
         .post(Uri.parse(passwordResetEndPoint),
-            body: json.encode(body), headers: ApiClient.header)
+            body: json.encode(body), headers: await getHeaders())
         .timeout(const Duration(seconds: 20));
+
+    pp(response.body);
 
     if ((await jsonChecker.isJson(response.body))) {
       final data = json.decode(response.body);
-      print("Reset password returns $data");
 
       if (data['status'] == 'OK') {
         return true;
       } else if (data['response']['code'] == unsupportedAccessErrorCode) {
-        print(data['response']['message']);
+
         throw ServerException(data['response']['message']);
       } else {
-        print(data['response']['message']);
+
         throw ServerException(serverErrorMsg);
       }
     } else {
@@ -205,14 +223,16 @@ class AuthRemoteSourceImpl extends AuthRemoteSource {
     }
     final response = await client
         .post(Uri.parse(otpVerifyEndPoint),
-            body: json.encode(body), headers: ApiClient.header)
+            body: json.encode(body), headers: await getHeaders())
         .timeout(const Duration(seconds: 20));
+
+    pp(response.body);
 
     if ((await jsonChecker.isJson(response.body))) {
       final data = json.decode(response.body);
-      print("Data is $data");
+
       if (data['status'] == null) {
-        print(data['message']);
+
         toastInfo(msg: data['message']);
         return false;
       }
@@ -238,14 +258,16 @@ class AuthRemoteSourceImpl extends AuthRemoteSource {
 
     final response = await client
         .post(Uri.parse(otpRequestEndPoint),
-            body: json.encode(body), headers: ApiClient.header)
+            body: json.encode(body), headers: await getHeaders())
         .timeout(const Duration(seconds: 20));
+
+    pp(response.body);
 
     if ((await jsonChecker.isJson(response.body))) {
       final data = json.decode(response.body);
 
       if (data['status'] == null) {
-        print(data['message']);
+
         toastInfo(msg: data['message']);
         return false;
       }

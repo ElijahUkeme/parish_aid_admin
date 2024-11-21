@@ -38,7 +38,7 @@ class UserAuthBloc extends Bloc<UserAuthEvent, UserAuthState> {
             UserLoginParams(email: event.email, password: event.password));
 
         emit(result.fold((failure) => UserLoginError(failure),
-            (status) => UserLoginLoaded(status)));
+            (model) => UserLoginLoaded(model)));
       } else if (event is UserFetchAccountEvent) {
         emit(UserFetchAccountLoading());
 

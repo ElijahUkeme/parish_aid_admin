@@ -1,3 +1,5 @@
+import '../../../group/data/model/group_model.dart';
+
 class ParishModel {
   final String? terminus;
   final String? status;
@@ -15,7 +17,8 @@ class ParishResponse {
   int? code;
   String? title;
   String? message;
-  ParishData? data;
+  List<ParishData>? data;
+
 
   ParishResponse(this.code, this.title, this.message, this.data);
 
@@ -24,7 +27,13 @@ class ParishResponse {
     title = json["title"];
     message = json["message"];
     if (json['data'] != null) {
-      data = ParishData.fromJson(json['data']);
+      data = [];
+
+      json['data'].forEach((e){
+        data!.add(ParishData.fromJson(e));
+        print("The data is now ${data!.length.toString()}");
+        print("The looped function returns ${data![0].toString()}");
+       });
     }
   }
 }
@@ -32,6 +41,11 @@ class ParishResponse {
 class ParishData {
   int? id;
   String? name;
+  String? email;
+  String? uuid;
+  String? status;
+  String? type;
+  String? enrolmentLink;
   String? acronym;
   String? address;
   String? phoneNo;
@@ -45,6 +59,10 @@ class ParishData {
   ParishData(
       {this.id,
       this.name,
+        this.email,
+        this.type,
+        this.uuid,
+        this.status,
       this.acronym,
       this.address,
       this.phoneNo,
@@ -55,12 +73,18 @@ class ParishData {
       this.diocese,
       this.attachments});
 
-  ParishData.fromJson(Map<String, dynamic> json) {
+  ParishData.fromJson( dynamic json) {
     id = json['id'];
     name = json['name'];
     acronym = json['acronym'];
     address = json['address'];
     phoneNo = json['phone_no'];
+    email = json['email'];
+    status = json['status'];
+    uuid = json['uuid'];
+    type = json['type'];
+    phoneNo = json['phone_no'];
+    enrolmentLink = json['enrolment_link'];
     parishPriestName = json['parish_priest_name'];
     if (json['town'] != null) {
       town = Town.fromJson(json['town']);
@@ -116,7 +140,6 @@ class Country {
 class Diocese {
   int? id;
   String? name;
-  String? type;
   String? phoneNo;
   String? bishopName;
   Province? province;
@@ -124,7 +147,6 @@ class Diocese {
   Diocese(
       {this.id,
       this.name,
-      this.type,
       this.phoneNo,
       this.bishopName,
       this.province});
@@ -132,7 +154,7 @@ class Diocese {
   Diocese.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     name = json['name'];
-    type = json['phone_no'];
+    phoneNo = json['phone_no'];
     bishopName = json['bishop_name'];
     if (json['province'] != null) {
       province = Province.fromJson(json['province']);

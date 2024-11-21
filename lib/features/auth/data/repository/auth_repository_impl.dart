@@ -16,6 +16,7 @@ import 'package:parish_aid_admin/features/auth/domain/usecase/reset_password.dar
 import 'package:parish_aid_admin/features/auth/domain/usecase/sign_up_user.dart';
 import 'package:parish_aid_admin/features/auth/domain/usecase/verify_otp.dart';
 import 'package:parish_aid_admin/features/auth/domain/usecase/verify_user.dart';
+import 'package:parish_aid_admin/features/users/data/models/user_auth_model.dart';
 
 import '../../domain/usecase/request_otp.dart';
 
@@ -30,31 +31,28 @@ class AuthRepositoryImpl extends AuthRepository {
       required this.authLocalSource});
 
   @override
-  Future<Either<Failure, bool>> signInUser(LoginUserParams params) async {
-    return ServiceRunner<bool>(
+  Future<Either<Failure, AuthUserModel>> signInUser(LoginUserParams params) async {
+    return ServiceRunner<AuthUserModel>(
       networkInfo: networkInfo,
     ).runNetworkTask(() async {
       //call login from authRemoteSource
-      final userToken = await authRemoteSource.loginUser(params);
-      //cache the new token returned from the server
-      print(
-          "this is the token from the auth repo impl ${userToken.response!.data!.token}");
-      await authLocalSource.cacheAuthToken(userToken);
-      ApiClient.updateHeader(userToken.response!.data!.token!);
-      return Future.value(true);
+      final result = await authRemoteSource.loginUser(params);
+      //cache the user data in the local storage
+
+      await authLocalSource.cachedUserAuth(result.response!.data!);
+      return result;
     });
   }
 
   @override
-  Future<Either<Failure, bool>> signUpUser(SignUpUserParams params) async {
-    return ServiceRunner<bool>(networkInfo: networkInfo)
+  Future<Either<Failure, AuthUserModel>> signUpUser(SignUpUserParams params) async {
+    return ServiceRunner<AuthUserModel>(networkInfo: networkInfo)
         .runNetworkTask(() async {
       //call sign up from the authResource
-      final userToken = await authRemoteSource.signUpUser(params);
-      //cache the user token from the newly registered user
-      await authLocalSource.cacheAuthToken(userToken);
-      ApiClient.updateHeader(userToken.response!.data!.token!);
-      return Future.value(true);
+      final result = await authRemoteSource.signUpUser(params);
+      //cache the user data from the newly registered user
+      await authLocalSource.cachedUserAuth(result.response!.data!);
+      return result;
     });
   }
 
@@ -95,4 +93,5 @@ class AuthRepositoryImpl extends AuthRepository {
     return ServiceRunner<bool>(networkInfo: networkInfo)
         .runNetworkTask(() => authRemoteSource.requestOtp(params));
   }
+
 }

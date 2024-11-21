@@ -2,37 +2,41 @@ import 'dart:convert';
 
 import 'package:parish_aid_admin/api/api_client.dart';
 import 'package:parish_aid_admin/core/cache_manager/cache_manager.dart';
+import 'package:parish_aid_admin/core/helpers/custom_widgets.dart';
 import 'package:parish_aid_admin/core/utils/strings.dart';
 import 'package:parish_aid_admin/features/auth/data/models/auth_user_model.dart';
 
 abstract class AuthLocalSource {
-  Future<bool> cacheAuthToken(AuthUserModel data);
   Future<bool> clearAuthToken();
-  Future<AuthUserModel?> getAuthToken();
+  Future<Data?> getCachedAuthUser();
+  Future<bool> cachedUserAuth(Data userAuthData);
 }
 
 class AuthLocalSourceImpl extends AuthLocalSource {
   @override
-  Future<bool> cacheAuthToken(AuthUserModel data) async {
-    return await CacheManager.instance
-        .storePref(userTokenKey, jsonEncode(data.response!.data!.token!));
+  Future<bool> cachedUserAuth(Data userAuthData) async{
+    return await CacheManager.instance.storePref(userKey, userAuthData.toJson);
   }
 
   @override
   Future<bool> clearAuthToken() async {
-    return await CacheManager.instance.storePref(userTokenKey, '');
+    await CacheManager.instance.storePref(userKey, '');
+    await CacheManager.instance.storePref(userTokenKey, '');
+    return true;
   }
 
   @override
-  Future<AuthUserModel?> getAuthToken() async {
-    final authUserData = await CacheManager.instance
-        .getPref(jsonDecode(userTokenKey)) as String?;
-    if (authUserData != null && authUserData.isNotEmpty) {
-      print(
-          "The token returned from the local storage is ${AuthUserModel.fromJson(json.decode(authUserData))}");
-      return AuthUserModel.fromJson(json.decode(authUserData));
+  Future<Data?> getCachedAuthUser() async {
+
+    final authString =
+        await CacheManager.instance.getPref(userKey) as String?;
+    if (authString != null && authString.isNotEmpty) {
+      pp('Local storage is not empty');
+      return Data.fromJsonObject(authString);
     }
-    print("the local storage returns null");
+    pp('Local storage is empty');
     return null;
   }
+
+
 }

@@ -7,7 +7,7 @@ class LgaBloc extends Bloc<LgaEvent, LgaState> {
   final GetLga getLga;
 
   LgaBloc({required this.getLga}) : super(LgaInitial()) {
-    on<LgaEvent>(event, emit) async {
+    on<LgaEvent>((event, emit) async {
       if (event is GetLgaEvent) {
         emit(LgaLoading());
 
@@ -16,6 +16,6 @@ class LgaBloc extends Bloc<LgaEvent, LgaState> {
         emit(result.fold(
             (failure) => LgaError(failure), (lga) => LgaLoaded(lga)));
       }
-    }
+      });
   }
 }

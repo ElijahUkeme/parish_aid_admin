@@ -5,20 +5,20 @@ import 'package:parish_aid_admin/core/usecase/usecase.dart';
 import 'package:parish_aid_admin/features/state/data/models/state_model.dart';
 import 'package:parish_aid_admin/features/state/domain/repository/state_repository.dart';
 
-class GetState extends Usecase<StateModel,GetStateParams>{
+class GetState extends Usecase<StateModel,GetStatesParams>{
   final StateRepository stateRepository;
 
   GetState({required this.stateRepository});
   @override
-  Future<Either<Failure, StateModel>> call(GetStateParams params) {
+  Future<Either<Failure, StateModel>> call(GetStatesParams params) {
     return stateRepository.getState(params);
   }
 }
 
-class GetStateParams extends Equatable{
-  final int stateId;
+class GetStatesParams extends Equatable{
+  final int countryId;
 
-  const GetStateParams({required this.stateId});
+  const GetStatesParams({required this.countryId});
 
   @override
 

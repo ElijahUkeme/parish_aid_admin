@@ -25,12 +25,13 @@ class StateResponse{
     message = json['message'];
     title = json['title'];
     if(json['data'] !=null){
-      json['data'].forEach((v){
-        data!.add(StateData.fromJson(v));
+      data = [];
+      json['data'].forEach((e){
+        data!.add(StateData.fromJson(e));
       });
+      }
     }
   }
-}
 class StateData{
   int? id;
   String? name;
@@ -40,7 +41,7 @@ class StateData{
 
   StateData.fromJson(Map<String,dynamic>json){
     id=json['id'];
-    name = json['nam'];
+    name = json['name'];
     countryId = json['country_id'];
   }
 }

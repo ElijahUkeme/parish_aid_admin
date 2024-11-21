@@ -6,15 +6,13 @@ import 'package:parish_aid_admin/core/cache_manager/cache_manager.dart';
 import 'package:parish_aid_admin/core/utils/strings.dart';
 import 'package:parish_aid_admin/features/auth/data/models/auth_user_model.dart';
 
-import '../../features/auth/domain/entities/auth_user.dart';
-
 Future<Map<String, String>> getHeaders(
     {bool? jsonRequest, bool tokenized = true}) async {
   if (jsonRequest != null && jsonRequest) {
     return {
       'Content-type': 'application/json',
       HttpHeaders.authorizationHeader:
-          'Bearer ${(await getAuthUser())!.response!.data!.token}',
+          'Bearer ${(await getAuthUser())!.token}',
       'Accept': 'application/json'
     };
   } else if (!tokenized) {
@@ -23,7 +21,7 @@ Future<Map<String, String>> getHeaders(
 
   final tokenizedHeader = {
     HttpHeaders.authorizationHeader:
-        'Bearer ${(await getAuthUser())!.response!.data!.token}',
+        'Bearer ${(await getAuthUser())!.token}',
     'Accept': 'application/json',
     'api_key': appApiKey!
   };
@@ -31,13 +29,11 @@ Future<Map<String, String>> getHeaders(
   return tokenizedHeader;
 }
 
-Future<AuthUser?> getAuthUser() async {
-  print(
-      "The token from local db is ${CacheManager.instance.getPref(jsonDecode(userTokenKey))}");
-  return AuthUserModel.fromJson(
-      (await CacheManager.instance.getPref(userTokenKey)));
+Future<Data?> getAuthUser() async {
+  return Data.fromJsonObject(
+      (await CacheManager.instance.getPref(userKey)));
 }
 
-Future<AuthUser?> getUser() async {
-  return AuthUserModel.fromJson(await CacheManager.instance.getPref(userKey));
+Future<Data?> getUser() async {
+  return Data.fromJson(await CacheManager.instance.getPref(userKey));
 }

@@ -27,6 +27,7 @@ class LgaResponse {
     title = json['title'];
     message = json['message'];
     if (json['data'] != null) {
+      data = [];
       json['data'].forEach((v) {
         data!.add(LgaData.fromJson(v));
       });

@@ -8,12 +8,13 @@ import 'package:parish_aid_admin/features/auth/domain/usecase/reset_password.dar
 import 'package:parish_aid_admin/features/auth/domain/usecase/sign_up_user.dart';
 import 'package:parish_aid_admin/features/auth/domain/usecase/verify_otp.dart';
 import 'package:parish_aid_admin/features/auth/domain/usecase/verify_user.dart';
+import 'package:parish_aid_admin/features/users/data/models/user_auth_model.dart';
 import '../../../../core/failures/failure.dart';
 
 abstract class AuthRepository {
-  Future<Either<Failure, bool>> signUpUser(SignUpUserParams params);
+  Future<Either<Failure, AuthUserModel>> signUpUser(SignUpUserParams params);
 
-  Future<Either<Failure, bool>> signInUser(LoginUserParams params);
+  Future<Either<Failure, AuthUserModel>> signInUser(LoginUserParams params);
 
   Future<Either<Failure, AuthUserModel>> verifyUser(VerifyUserParams params);
   Future<Either<Failure, bool>> logoutUser(LogoutUserParams params);

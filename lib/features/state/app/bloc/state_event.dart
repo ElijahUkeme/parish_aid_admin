@@ -5,8 +5,8 @@ class StateEvent extends Equatable {
   List<Object?> get props => [];
 }
 
-class GetStateByStateIdEvent extends StateEvent {
-  final int stateId;
+class GetStatesByCountryIdEvent extends StateEvent {
+  final int countryId;
 
-  GetStateByStateIdEvent(this.stateId);
+  GetStatesByCountryIdEvent(this.countryId);
 }

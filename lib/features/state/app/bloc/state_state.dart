@@ -6,14 +6,14 @@ class StateState extends Equatable{
   @override
   List<Object?> get props => [];
 }
-class GetStateInitial extends StateState{}
-class GetStateLoading extends StateState{}
-class GetStateLoaded extends StateState{
+class GetStatesInitial extends StateState{}
+class GetStatesLoading extends StateState{}
+class GetStatesLoaded extends StateState{
   final StateModel stateModel;
 
-  GetStateLoaded(this.stateModel);
+  GetStatesLoaded(this.stateModel);
 }
-class GetStateError extends StateState{
+class GetStatesError extends StateState{
   final Failure failure;
-  GetStateError(this.failure);
+  GetStatesError(this.failure);
 }

@@ -28,7 +28,7 @@ class UserResetPasswordEvent extends UserAuthEvent {
   final String email;
   final String password;
   final String confirmPassword;
-  final int code;
+  final String code;
 
   UserResetPasswordEvent(
       {required this.email,

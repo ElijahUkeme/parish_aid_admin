@@ -28,10 +28,17 @@ class LgaRemoteSourceImpl extends LgaRemoteSource {
     final response = await client
         .get(Uri.parse(lgaGet), headers: ApiClient.header)
         .timeout(const Duration(seconds: 20));
+    print("The lga response returns ${response.body.toString()}");
 
     if (await jsonChecker.isJson(response.body)) {
       final data = json.decode(response.body);
       if (data['status'] == 'OK') {
+        LgaModel lgaModel = LgaModel.fromJson(data);
+        for(final lga in lgaModel.response!.data!){
+          print("Lga name is ${lga.name}");
+          print("Lga id is ${lga.id}");
+          print("Lga state id is ${lga.stateId}");
+        }
         return LgaModel.fromJson(data);
       } else if (data['response']['code'] == unsupportedAccessErrorCode) {
         throw ServerException(data['response']['message']);

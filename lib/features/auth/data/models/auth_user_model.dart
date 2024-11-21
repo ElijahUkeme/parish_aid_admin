@@ -59,31 +59,35 @@ class ReturnResponse {
 
 class Data {
   String? token;
-  AdminResponse? admin;
+  UserResponse? user;
 
-  Data({required token, required admin}) {
-    this.token = token;
-    this.admin = admin;
-  }
+  Data({required this.token, required this.user});
 
   factory Data.fromJsonObject(String source) {
     final data = json.decode(source);
     return Data(
         token: data['token'],
-        admin: data['admin'] != null
-            ? AdminResponse.fromJson(data['admin'])
-            : null);
+        user: UserResponse.fromMap(data['user']));
   }
 
   Data.fromJson(Map<String, dynamic> json) {
     token = json["token"];
-    if (json["admin"] != null) {
-      admin = AdminResponse.fromJson(json["admin"]);
+    if (json["user"] != null) {
+      user = UserResponse.fromJson(json["user"]);
     }
+  }
+
+
+  String get toJson {
+    final body = {
+      'token': token,
+      'user': user!.toJson
+    };
+    return json.encode(body);
   }
 }
 
-class AdminResponse {
+class UserResponse {
   int? id;
   String? firstName;
   String? email;
@@ -92,7 +96,7 @@ class AdminResponse {
   String? createdAt;
   String? updatedAt;
 
-  AdminResponse(
+  UserResponse(
       {this.id,
       this.firstName,
       this.email,
@@ -101,19 +105,45 @@ class AdminResponse {
       this.createdAt,
       this.updatedAt});
 
-  Map<String, dynamic> toJson() {
-    Map<String, dynamic> data = <String, dynamic>{};
-    data["id"] = id;
-    data["first_name"] = firstName;
-    data["email"] = email;
-    data["email_verified"] = emailVerified;
-    data["created_at"] = createdAt;
-    data["updated_at"] = updatedAt;
+  // Map<String, dynamic> toJson() {
+  //   Map<String, dynamic> data = <String, dynamic>{};
+  //   data["id"] = id;
+  //   data["first_name"] = firstName;
+  //   data["email"] = email;
+  //   data["email_verified"] = emailVerified;
+  //   data["created_at"] = createdAt;
+  //   data["updated_at"] = updatedAt;
+  //
+  //   return data;
+  // }
 
-    return data;
+  String get toJson {
+    final body = {
+      'id': id,
+      'first_name': firstName,
+      'email': email,
+      'phoneNumber': phoneNumber,
+      'emailVerified': emailVerified,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
+    };
+    return json.encode(body);
   }
 
-  factory AdminResponse.fromJson(Map<String, dynamic> json) => AdminResponse(
+  factory UserResponse.fromMap(String source) {
+    final data = json.decode(source);
+    return UserResponse(
+        id: data["id"],
+        firstName: data["first_name"],
+        email: data["email"],
+        phoneNumber: data["phone_number"],
+        emailVerified: data["email_verified"],
+        createdAt: data["created_at"],
+        updatedAt: data["updated_at"]);
+  }
+
+
+  factory UserResponse.fromJson(Map<String, dynamic> json) => UserResponse(
       id: json["id"],
       firstName: json["first_name"],
       email: json["email"],

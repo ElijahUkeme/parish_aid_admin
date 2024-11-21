@@ -1,36 +1,45 @@
-import 'dart:convert';
 
 import 'package:parish_aid_admin/core/utils/strings.dart';
-import 'package:parish_aid_admin/features/users/data/models/user_auth_model.dart';
+import 'package:parish_aid_admin/features/auth/data/models/auth_user_model.dart';
 
 import '../../../../core/cache_manager/cache_manager.dart';
+import '../../../../core/helpers/custom_widgets.dart';
 
 abstract class UserAuthLocalSource {
-  Future<bool> cacheAuthToken(UserAuthModel data);
   Future<bool> clearAuthToken();
-  Future<UserAuthModel?> getAuthToken();
+  Future<Data?> getCachedAuthUser();
+  Future<bool> cachedUserAuth(Data userAuthData);
 }
 
 class UserAuthLocalSourceImpl extends UserAuthLocalSource {
+
   @override
-  Future<bool> cacheAuthToken(UserAuthModel data) async {
-    return await CacheManager.instance
-        .storePref(endUserTokenKey, json.encode(data.response!.data!.token!));
+  Future<bool> cachedUserAuth(Data userAuthData) async{
+    return await CacheManager.instance.storePref(userKey, userAuthData.toJson);
   }
 
   @override
   Future<bool> clearAuthToken() async {
-    return await CacheManager.instance.storePref(endUserTokenKey, '');
+    await CacheManager.instance.storePref(userKey, '');
+    await CacheManager.instance.storePref(userTokenKey, '');
+    return true;
   }
 
   @override
-  Future<UserAuthModel?> getAuthToken() async {
-    final authUserData =
-        await CacheManager.instance.getPref(endUserTokenKey) as String?;
-    if (authUserData != null && authUserData.isNotEmpty) {
-      print(
-          "The token returned from the local storage is ${UserAuthModel.fromJson(json.decode(authUserData))}");
-      return UserAuthModel.fromJson(json.decode(authUserData));
+  Future<Data?> getCachedAuthUser() async {
+
+    // final storedData = await CacheManager.instance.getPref(userKey) as String?;
+    // if(storedData !=null && storedData.isNotEmpty){
+    //   Data userInfo = Data.fromJsonObject(storedData);
+    //   pp('The stored email is ${userInfo.user!.email}');
+    //   pp('The stored token is ${userInfo.token}');
+    //   pp('The stored name is ${userInfo.user!.firstName}');
+    // }
+
+    final authString =
+    await CacheManager.instance.getPref(userKey) as String?;
+    if (authString != null && authString.isNotEmpty) {
+      return Data.fromJsonObject(authString);
     }
     return null;
   }
