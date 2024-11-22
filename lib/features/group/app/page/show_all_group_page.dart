@@ -1,10 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:parish_aid_admin/core/widgets/custom_top_snackbar.dart';
 import 'package:parish_aid_admin/features/group/app/page/group_double_card.dart';
-import 'package:parish_aid_admin/features/group/app/page/update_group_page.dart';
+
 import '../../../../widgets/auth/auth_widgets.dart';
 import '../../data/model/group_model.dart';
 import '../bloc/group_bloc.dart';
@@ -37,7 +34,6 @@ class _ShowAllGroupPageState extends State<ShowAllGroupPage> {
       if (state is GetGroupsLoading) {
         fetchLoading = true;
         fetchError = false;
-
       } else if (state is GetGroupsLoaded) {
         fetchLoading = false;
         fetchError = false;
@@ -97,15 +93,12 @@ class _ShowAllGroupPageState extends State<ShowAllGroupPage> {
       itemCount: groupModel!.response!.data!.length,
       itemBuilder: (BuildContext context, int index) {
         //final Color color = CardPage.colors[index];
-        return GroupDoubleCard(
-            groupData: groupModel!.response!.data![index]);
+        return GroupDoubleCard(groupData: groupModel!.response!.data![index]);
       },
     );
   }
-
   void showGroups() {
     BlocProvider.of<GroupBloc>(context)
         .add(GetGroupsEvent(parishId: widget.parishId));
   }
-
 }

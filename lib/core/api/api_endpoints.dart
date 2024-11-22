@@ -66,3 +66,6 @@ final showBillingEndPoint = '$baseUrl/parish';
 final getSubscriptionsEndPoint = '$baseUrl/parish';
 final showSubscriptionEndPoint = '$baseUrl/parish';
 final initiateSubscriptionEndPoint = '$baseUrl/parish';
+
+//Transactions Endpoint
+final getTransactionsEndPoint = '$baseUrl/parish';

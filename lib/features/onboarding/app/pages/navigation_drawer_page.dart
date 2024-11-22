@@ -357,10 +357,10 @@ class _ComplexDrawerState extends State<ComplexDrawer> {
     // CDM(Icons.grid_view, "Billing Plans", ["Get all Plans", "Show a Plan"]),
     CDM(Icons.grid_view, "Subscriptions",
         ["Get Subscription List", "Show a Subscription"]),
-    // CDM(Icons.church, "Diocese", [
-    //   "Get all Diocese",
-    //   "Show a Diocese",
-    // ]),
+    CDM(Icons.money, "Transactions", [
+      "Get Transactions",
+      "Show a Transaction",
+    ]),
     // CDM(Icons.location_on, "Location", ["Get States", "Get LGAs", "Get Towns"]),
   ];
 

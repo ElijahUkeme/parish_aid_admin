@@ -6,6 +6,9 @@ class AppColor {
   static const primaryColor = Color(0xFF1559E6);
 
 }
+const kColor20 = Color(0xFFEDF3F3);
+const Color ghostWhite = const Color(0xFFF8F8FF);
+const blackColor = Color(0xFF26262F);
 
 class Colorz {
   static const Color primaryColor = Color(0xff5b60ec);

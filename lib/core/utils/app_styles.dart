@@ -3,10 +3,22 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 import 'app_dimensions.dart';
+import 'color.dart';
 
 class Fonts {
   static const String montserrat = 'Montserrat';
   static const String roboto = 'Roboto';
+}
+
+extension StyleExtension on BuildContext {
+  TextStyle get toolBarTitleStyle {
+    return TextStyles.h1.copyWith(
+        letterSpacing: -.32,
+        fontSize: 14,
+        fontWeight: FontWeight.w600,
+        color: blackColor
+    );
+  }
 }
 
 class TextStyles {

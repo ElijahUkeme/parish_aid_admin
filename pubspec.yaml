@@ -48,6 +48,7 @@ dependencies:
   form_validator: ^2.1.1
   segmented_progress_bar: ^1.1.0
   logger: ^2.4.0
+  pull_to_refresh: ^2.0.0
 
 dev_dependencies:
   flutter_test:

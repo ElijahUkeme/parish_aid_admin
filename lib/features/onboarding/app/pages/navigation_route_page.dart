@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:parish_aid_admin/features/billing/app/pages/get_billing_plans_page.dart';
 import 'package:parish_aid_admin/features/billing/app/pages/get_subscriptions_page.dart';
 import 'package:parish_aid_admin/features/billing/app/pages/initiate_billing_subscription_page.dart';
@@ -24,8 +25,11 @@ import 'package:parish_aid_admin/features/parishioner/app/page/create_parishione
 import 'package:parish_aid_admin/features/parishioner/app/page/delete_parishioner_page.dart';
 import 'package:parish_aid_admin/features/parishioner/app/page/get_parishioner_page.dart';
 import 'package:parish_aid_admin/features/parishioner/app/page/show_all_parishioners_page.dart';
+import 'package:parish_aid_admin/features/transaction/app/bloc/transaction_bloc.dart';
+import 'package:parish_aid_admin/features/transaction/app/pages/get_transactions_page.dart';
 import 'package:parish_aid_admin/features/users/data/models/user_account_fetch_model.dart';
 
+import '../../../../injection_container.dart';
 import '../../../group/app/page/create_group_page.dart';
 import '../../../home/app/pages/create_parish_page.dart';
 
@@ -155,5 +159,10 @@ void navigate(BuildContext context, String action, Parish? parish) {
         builder: (context)=>ShowVerificationCodePage(parishId: parish!.id.toString())));
   }else if(action.toString()=="Get all Group Admin"){
     Navigator.push(context, MaterialPageRoute(builder: (context)=>VerifyGroupAdminListPage(parishId: parish!.id)));
+  }else if(action.toString()=='Get Transactions'){
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>BlocProvider(
+  create: (context) => sl<TransactionBloc>(),
+  child: GetTransactionsPage(parishId: parish!.id),
+)));
   }
 }

@@ -105,6 +105,12 @@ import 'package:parish_aid_admin/features/town/data/sources/town_local_source.da
 import 'package:parish_aid_admin/features/town/data/sources/town_remote_source.dart';
 import 'package:parish_aid_admin/features/town/domain/repository/town_repository.dart';
 import 'package:parish_aid_admin/features/town/domain/usecases/get_town.dart';
+import 'package:parish_aid_admin/features/transaction/app/bloc/transaction_bloc.dart';
+import 'package:parish_aid_admin/features/transaction/data/repository/transaction_repository_impl.dart';
+import 'package:parish_aid_admin/features/transaction/data/sources/transaction_remote_source.dart';
+import 'package:parish_aid_admin/features/transaction/domain/repository/transaction_repository.dart';
+import 'package:parish_aid_admin/features/transaction/domain/usecases/get_transactions.dart';
+import 'package:parish_aid_admin/features/transaction/domain/usecases/show_transaction.dart';
 import 'package:parish_aid_admin/features/users/app/bloc/user_auth_bloc.dart';
 import 'package:parish_aid_admin/features/users/data/repository/user_auth_repository_impl.dart';
 import 'package:parish_aid_admin/features/users/data/sources/user_auth_local_source.dart';
@@ -203,19 +209,17 @@ Future<void> init() async {
       deleteParishioner: sl()));
 
   //Billing Plans Bloc Injection
-  // sl.registerLazySingleton(()=>BillingPlansBloc(
-  //     getBillingPlans: sl(),
-  //     showBillingPlan: sl(),
-  //     getSubscription: sl(),
-  //     showSubscription: sl(),
-  //     initiateBillingSubscription: sl()));
-
   sl.registerFactory(()=>BillingPlansBloc(
       getBillingPlans: sl(),
       showBillingPlan: sl(),
       getSubscription: sl(),
       showSubscription: sl(),
       initiateBillingSubscription: sl()));
+
+  //Transaction Bloc Injection
+  sl.registerLazySingleton(()=>TransactionBloc(
+      getTransactions: sl(),
+      showTransaction: sl()));
 
   //Auth Usecases
   sl.registerLazySingleton(() => VerifyUser(sl()));
@@ -300,6 +304,10 @@ Future<void> init() async {
   sl.registerLazySingleton(()=>GetSubscriptions(sl()));
   sl.registerLazySingleton(()=>InitiateBillingSubscription(sl()));
 
+  //Transaction Usecases
+  sl.registerLazySingleton(()=>GetTransactions(sl()));
+  sl.registerLazySingleton(()=>ShowTransaction(sl()));
+
   //Auth Repository
   sl.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(
       authRemoteSource: sl(), networkInfo: sl(), authLocalSource: sl()));
@@ -357,6 +365,11 @@ Future<void> init() async {
       billingPlansRemoteSource: sl(),
       networkInfo: sl()));
 
+  //Transaction Repository
+  sl.registerLazySingleton<TransactionRepository>(()=>TransactionRepositoryImpl(
+      transactionRemoteSource: sl(),
+      networkInfo: sl()));
+
   // Auth RemoteSources
   sl.registerLazySingleton<AuthRemoteSource>(
       () => AuthRemoteSourceImpl(client: sl(), jsonChecker: sl()));
@@ -401,6 +414,11 @@ Future<void> init() async {
 
   //Billing plans RemoteSource
   sl.registerLazySingleton<BillingPlansRemoteSource>(()=>BillingPlansRemoteSourceImpl(
+      client: sl(),
+      jsonChecker: sl()));
+
+  //Transaction RemoteSource
+  sl.registerLazySingleton<TransactionRemoteSource>(()=>TransactionRemoteSourceImpl(
       client: sl(),
       jsonChecker: sl()));
 
